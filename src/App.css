@@ -31,3 +31,26 @@
     transform: rotate(360deg);
   }
 }
+
+.hidden{
+  display: none
+}
+
+.side-view{
+  padding: 10px 10px 10px 10px;
+  width: 45%;
+  background-color: #0000001F;
+}
+
+.platform{
+  display: flex;
+  width: 950px;
+  margin: auto;
+}
+
+.vs{
+  font-size: 2em;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
