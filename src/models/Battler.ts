@@ -9,6 +9,7 @@ export class Battler{
     private thisTurnDpDamaged: boolean;
     position: number;
     name: string;
+    id: number;
 
     constructor(side: Side, data: BattlerData) {
         this.position = data.position;
@@ -19,6 +20,7 @@ export class Battler{
         this.weakState = false;
         this.thisTurnDpDamaged = false;
         this.name = data.name;
+        this.id = data.id;
     }
 
     getCurrentAttribute() : Attribute | null { 
@@ -81,6 +83,7 @@ export interface AttributeDamageResult{
 export interface BattlerData{
     name: string;
     dp: number;
+    id: number;
     attributeResistances: {[key in Attribute]: number};
     position: 0|1|2|3|4|5;
 }
