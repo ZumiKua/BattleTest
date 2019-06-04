@@ -86,3 +86,21 @@
   border: #0000001F solid 1px;
   margin: 10px;
 }
+
+.target-cell {
+  width: 2em;
+  height: 1em;
+}
+
+.highlighted.target-cell{
+  background-color: lightgray;
+}
+
+.target-table{
+  border:1px solid black;
+}
+
+
+.target-table td {
+  border: 1px solid black;
+}

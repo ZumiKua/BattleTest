@@ -6,5 +6,5 @@ export interface ActionData{
     hpDamage: number;
     attribute: Attribute;
     attributeDamage: number;
-    
+    name: string;
 }

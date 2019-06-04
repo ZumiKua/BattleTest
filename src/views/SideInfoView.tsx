@@ -1,9 +1,8 @@
 import React, { ReactNode, ChangeEvent } from "react";
 import { BattlerData } from "../models/Battler";
 import { BattlerInfoView } from "./BattlerInfoView";
-import { SideData, Side } from "../models/Side";
+import { SideData } from "../models/Side";
 import { Attribute } from "../models/Attribute";
-import { tsThisType } from "@babel/types";
 
 export class SideInfoView extends React.Component<{side: SideData, onSideChanged: (side: SideData) => void}, {}>{
 

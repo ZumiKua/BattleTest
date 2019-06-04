@@ -1,8 +1,6 @@
-import React, { SyntheticEvent, MouseEvent, ChangeEvent } from "react";
+import React, { ChangeEvent } from "react";
 import { ActionData } from "../models/ActionData";
-import { number } from "prop-types";
 import { Attribute } from "../models/Attribute";
-import { thisTypeAnnotation } from "@babel/types";
 
 interface Props{
     action: ActionData;
@@ -13,11 +11,12 @@ export class ActionInfoView extends React.Component<Props> {
     private action: ActionData;
     constructor(props: Props) {
         super(props);
-        this.action = {spCost: 0, hpDamage: 0, attribute: Attribute.Fire, attributeDamage: 0, targetArea: []};
+        this.action = {spCost: 0, hpDamage: 0, attribute: Attribute.Fire, attributeDamage: 0, targetArea: [], name: ""};
         this.onAttributeChanged = this.onAttributeChanged.bind(this);
         this.onAttributeDamageChanged = this.onAttributeDamageChanged.bind(this);
         this.onHpDamageChanged = this.onHpDamageChanged.bind(this);
         this.onSpCostChanged = this.onSpCostChanged.bind(this);
+        this.onNameChanged = this.onNameChanged.bind(this);
     }
 
     copyAction(action: ActionData) {
@@ -26,6 +25,7 @@ export class ActionInfoView extends React.Component<Props> {
         this.action.hpDamage = action.hpDamage;
         this.action.attribute = action.attribute;
         this.action.attributeDamage = action.attributeDamage;
+        this.action.name = action.name;
         return this.action;
     }
 
@@ -73,8 +73,15 @@ export class ActionInfoView extends React.Component<Props> {
         this.props.onActionChanged(action);
     }
 
+    onNameChanged(e: ChangeEvent<HTMLInputElement>) {
+        let action = this.copyAction(this.props.action);
+        action.name = e.target.value;
+        this.props.onActionChanged(action);
+    }
+
     render() {
         return <div className="action-view">
+            <p>名称: <input type="text" value={this.props.action.name} onChange={this.onNameChanged}/></p>
             <p>HP伤害: <input type="number" value={this.props.action.hpDamage} onChange={this.onHpDamageChanged} /></p>
             <p>SP消耗: <input type="number" value={this.props.action.spCost} onChange={this.onSpCostChanged} /></p>
             <p>属性伤害: <input type="number" value={this.props.action.attributeDamage} onChange={this.onAttributeDamageChanged} /></p>

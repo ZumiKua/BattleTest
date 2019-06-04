@@ -2,7 +2,7 @@ import { Battler } from "../models/Battler";
 import { Attribute } from "../models/Attribute";
 import React from "react";
 
-export function BattlerView(props: {battler: Battler}){
+export function BattlerView(props: {battler: Battler, onClick: (battler: Battler) => void}){
     const attribute: Attribute | null = props.battler.getCurrentAttribute();
     let attributeName : string = "无";
     if(attribute !== null){
@@ -24,7 +24,7 @@ export function BattlerView(props: {battler: Battler}){
                 break;
         }
     }
-    return <p className="battler">
+    return <p className="battler" onClick={(e) => props.onClick(props.battler)}>
         <b>{props.battler.name}</b> &nbsp;
         <b>DP: </b> {props.battler.dp} | &nbsp;
         <b>属性：</b>{attributeName}[{props.battler.getAttributePoint()}]

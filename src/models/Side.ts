@@ -21,7 +21,7 @@ export class Side{
     }
 
     getBattler(position: [number, number]) : Battler | undefined {
-        const flatPosition = position[0] * 3 + position[1];
+        const flatPosition = position[0] * 2 + position[1];
         return this.battlers.find(b => b.position === flatPosition);
     }
     

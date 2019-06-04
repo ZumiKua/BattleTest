@@ -1,6 +1,6 @@
 import React from "react";
 import { SideInfoView } from "./SideInfoView";
-import { SideData, Side } from "../models/Side";
+import { SideData } from "../models/Side";
 import { ActionData } from "../models/ActionData";
 import { ActionInfoView } from "./ActionInfoView";
 import { Attribute } from "../models/Attribute";
@@ -42,7 +42,7 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
     onAddAction() {
         this.setState((state) => {
             let arr = state.actions;
-            arr.push({hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: []})
+            arr.push({hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: ""})
             return {actions: arr};
         })
     }
