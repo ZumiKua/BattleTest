@@ -6,15 +6,17 @@ export class Action{
     user: Battler;
     targets: Battler[] | null;
     data: ActionData;
+    id: number;
     private attack: Attack | null;
     private targetPoint: [number, number];
 
-    constructor(ad: ActionData, user: Battler, target: [number, number]) {
+    constructor(ad: ActionData, user: Battler, target: [number, number], id: number) {
         this.data = ad;
         this.targets = null;
         this.attack = null;
         this.user = user;
         this.targetPoint = target;
+        this.id = id;
     }
 
     canUse(){
@@ -30,7 +32,8 @@ export class Action{
             this.targets = this.data.targetArea.map(point => {
                 let x = (this.targetPoint[0] + point[0]);
                 let y = (this.targetPoint[1] + point[1]);
-                if(x > 1 || x < 0 || y > 2 || y < 0) {
+                //todo extract position calculator.
+                if(x > 2 || x < 0 || y > 1 || y < 0) {
                     return undefined;
                 }
                 return side!.getBattler([x,y]);

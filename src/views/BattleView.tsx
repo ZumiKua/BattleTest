@@ -5,14 +5,16 @@ import { Phase, BattleVM, InputtingPhase } from "../viewmodels/BattleVM";
 import { Action, Attack } from "../models/Action";
 import { Subscription } from "rxjs";
 import { SideView } from "./SideView";
-import { ActionView } from "./ActionView";
 import { TargetView } from "./TargetView";
 import { Battler } from "../models/Battler";
+import { ResultView } from "./ResultView";
+import { ActionSelectionView } from "./ActionSelectionView";
+import { ActionRecordsView } from "./ActionRecordsView";
 
 interface Props{
     sideA: SideData | undefined;
     sideB: SideData | undefined;
-    actions: ActionData[] | undefined;
+    actionDatas: ActionData[] | undefined;
 }
 interface State {
     phase: Phase;
@@ -38,6 +40,9 @@ export class BattleView extends React.Component<Props, State>{
         this.onActionClicked = this.onActionClicked.bind(this);
         this.onTargetSelected = this.onTargetSelected.bind(this);
         this.onBattlerSelected = this.onBattlerSelected.bind(this);
+        this.onTargetSelectionClosed = this.onTargetSelectionClosed.bind(this);
+        this.onActionSelectionClosed = this.onActionSelectionClosed.bind(this);
+        this.onActionDeleted = this.onActionDeleted.bind(this);
     }
 
     createVM() {
@@ -103,6 +108,22 @@ export class BattleView extends React.Component<Props, State>{
         this.battleVM!.selectBattler(battler);
     }
 
+    onEndTurn() {
+        this.battleVM!.endInputting();
+    }
+
+    onTargetSelectionClosed() {
+        this.battleVM!.cancelTargetSelection();
+    }
+
+    onActionSelectionClosed() {
+        this.battleVM!.cancelActionSelection();
+    }
+
+    onActionDeleted(id: number) {
+        this.battleVM!.onActionDeleted(id);
+    }
+
     render() {
         this.recreateBattleVM();
         if(this.battleVM === undefined) {
@@ -110,26 +131,33 @@ export class BattleView extends React.Component<Props, State>{
         }
         let actions = null;
         console.log(this.state.inputtingPhase);
-        if(this.props.actions !== undefined && this.state.inputtingPhase === "decideAction") {
-            actions = <div className="actions"> {
-                this.props.actions.map((action, id) => 
-                    <ActionView action={action} key={id} onClicked={this.onActionClicked}/>)
-            } </div>
+        if(this.props.actionDatas !== undefined && this.state.inputtingPhase === "decideAction") {
+            actions = <ActionSelectionView onActionClicked={this.onActionClicked} actionDatas={this.props.actionDatas} onActionSelectionClosed={this.onActionSelectionClosed}
+            />
         }
         let target = null;
         if(this.state.inputtingPhase === "decideTarget") {
-            target = <TargetView battlers={this.battleVM.targets!} onTargetSelected={this.onTargetSelected} areas={this.battleVM.inputtingAction!.targetArea}/>
+            target = <TargetView battlers={this.battleVM.targets!} onTargetSelected={this.onTargetSelected} areas={this.battleVM.inputtingAction!.targetArea} onClose={this.onTargetSelectionClosed}/>
         }
         return <div>
             <SideView side={this.battleVM!.sideA} onBattlerClick={this.onBattlerSelected}/>
             <SideView side={this.battleVM!.sideB} onBattlerClick={this.onBattlerSelected}/>
+            <ActionRecordsView actions={this.state.actions} onActionDeleted={this.onActionDeleted} />
             {
-                actions !== null ? actions : <React.Fragment />
+                this.state.phase === "inputting" ? <button onClick={() => this.onEndTurn()}>结束回合</button> : null
             }
+            <div className={`modal-container ${actions !== null || target !== null ? "show" : ""}`}>                 
+                {
+                    actions !== null ? actions : <React.Fragment />
+                }
+                {
+                    target !== null ? target : <React.Fragment />
+                }
+
+            </div>
             {
-                target !== null ? target : <React.Fragment />
+                this.state.actionResults.map((result, key) => <ResultView key={key} result={result}/>)
             }
-            
         </div>
     }
 }

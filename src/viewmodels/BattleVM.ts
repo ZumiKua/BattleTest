@@ -7,6 +7,8 @@ import { Observable, BehaviorSubject } from "rxjs"
 export type InputtingPhase = "decideBattler" | "decideAction" | "decideTarget" | undefined;
 export type Phase = "inputting"|"processing" | undefined;
 
+const UPDATE_INTERVAL = 200;
+
 export class BattleVM {
     private _sideA: Side;
     private _sideB: Side;
@@ -17,6 +19,7 @@ export class BattleVM {
     private currentProcessingAction: Action | undefined;
     private _inputtingAction: ActionData | undefined;
     private _currentInputtingBattler: Battler | undefined;
+    private _nextActionId: number;
 
     constructor(sideA: SideData, sideB: SideData) {
         this._sideA = new Side(sideA);
@@ -31,6 +34,7 @@ export class BattleVM {
         this._actionResults.next([]);
         this.currentProcessingAction = undefined;
         this.startTurn();
+        this._nextActionId = 0;
     }
 
     get phase() : Observable<Phase>{
@@ -84,7 +88,8 @@ export class BattleVM {
     setTarget(target: [number, number]) {
         if(this._inputtingAction!.spCost <= this._currentInputtingBattler!.side.sp) {
             this._currentInputtingBattler!.side.sp -= this._inputtingAction!.spCost;
-            this._actions.value.push(new Action(this._inputtingAction!, this._currentInputtingBattler!, target));
+            this._actions.value.push(new Action(this._inputtingAction!, this._currentInputtingBattler!, target, this._nextActionId));
+            ++this._nextActionId;
         }
         this._inputtingPhase.next("decideBattler");
     }
@@ -107,6 +112,16 @@ export class BattleVM {
     endInputting() {
         this._phase.next("processing");
         this._inputtingPhase.next(undefined);
+        this._actionResults.value.length = 0;
+        this._actionResults.next(this._actionResults.value);
+        this.updateLoop();
+    }
+
+    updateLoop() {
+        this.update();
+        if(this._phase.value === "processing") {
+            setTimeout( ()=> this.updateLoop(), UPDATE_INTERVAL);
+        }
     }
 
     update() {
@@ -131,11 +146,31 @@ export class BattleVM {
         
     }
 
+    cancelTargetSelection(): void {
+        this.checkInputting("decideTarget");
+        this._inputtingAction = undefined;
+        this._inputtingPhase.next("decideAction");
+    }
+
+    cancelActionSelection() : void {
+        this.checkInputting("decideAction");
+        this._currentInputtingBattler = undefined;
+        this._inputtingPhase.next("decideBattler");
+    }
+
     private startTurn() {
         this._sideA.onTurnStart();
         this._sideB.onTurnStart();
         this._phase.next("inputting");
         this._inputtingPhase.next("decideBattler");
+    }
+
+    onActionDeleted(id: number): void {
+        this.checkInputting("decideBattler");
+        const index = this._actions.value.findIndex((a) => a.id === id);
+        const [action] = this._actions.value.splice(index, 1);
+        action.user.side.sp += action.data.spCost;
+        this._actions.next(this._actions.value);
     }
     
 }

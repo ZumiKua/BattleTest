@@ -5,6 +5,7 @@ interface Props{
     battlers: Battler[];
     areas: [number, number][];
     onTargetSelected: (n: [number, number]) => void;
+    onClose: () => void;
 }
 
 function BattlerRow(props: {onHover: (b: boolean, p: [number, number]) => void, onClick: (p: [number, number]) => void, x: number, battlers: Battler[], highlighted: boolean[]}) {
@@ -68,8 +69,18 @@ export class TargetView extends React.Component<Props, {hoveredPosition: [number
         highlighted.forEach(v => map[v] = true);
         let battlerMap = Array(6).fill(null);
         this.props.battlers.forEach(b => battlerMap[b.position] = b);
-        return <table className="target-table">{
-            [0,1,2].map(v => <BattlerRow onHover={this.onHover} onClick={this.onTargetSelected} x={v} battlers={battlerMap} highlighted={map}/>)
-        }</table>
+        return <div className="modal target">
+                <p className="modal-header">
+                    <span className="modal-title">选择目标</span>
+                    <button className="modal-close anchor-like-button" onClick={(e) => this.props.onClose()}>[X]</button>
+                </p>
+                <table className="target-table">
+                    <tbody>
+                    {
+                        [0,1,2].map(v => <BattlerRow key={v} onHover={this.onHover} onClick={this.onTargetSelected} x={v} battlers={battlerMap} highlighted={map}/>)
+                    }
+                    </tbody>
+                </table>
+            </div>
     }
 }
