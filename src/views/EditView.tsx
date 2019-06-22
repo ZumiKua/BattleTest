@@ -5,6 +5,7 @@ import { ActionData } from "../models/ActionData";
 import { ActionInfoView } from "./ActionInfoView";
 import { Attribute } from "../models/Attribute";
 import { LoadView } from "./LoadView";
+import { Link } from "react-router-dom";
 
 const META_ITEM = "_saveMetaItem";
 
@@ -145,7 +146,8 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
                     <button onClick={this.onAddAction}>+</button>
                 </div>
                 <div className="footer-view">
-                    <button onClick={this.onComplete}>完成</button>
+                    <Link to="/battle" onClick={this.onComplete}>完成</Link>
+                    {/* <button onClick={this.onComplete}>完成</button> */}
                     <button onClick={() => this.onSave()}>保存</button>
                     <button onClick={() => this.onLoad()}>读取</button>
                 </div>
