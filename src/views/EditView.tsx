@@ -19,7 +19,24 @@ interface Props{
     onComplete: (sideA: SideData, sideB: SideData, actions: ActionData[]) => void;
 }
 
-export class EditView extends React.Component<Props, {side: SideData, side2: SideData, actions: ActionData[], loadShowing: boolean, saves: string[], currentPage: "sides" | "actions"}>{
+interface Action {
+    data: ActionData;
+    id: number;
+}
+
+interface State{
+    side: SideData;
+    side2: SideData;
+    actions: Action[];
+    loadShowing: boolean;
+    saves: string[];
+    currentPage: "sides" | "actions";
+}
+
+export class EditView extends React.Component<Props, State>{
+
+    maxActionId: number;
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -30,6 +47,7 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
             saves: [],
             currentPage: "sides" 
         }
+        this.maxActionId = 0;
         this.handleSideChanged = this.handleSideChanged.bind(this);
         this.handleSide2Changed = this.handleSide2Changed.bind(this);
         this.onAddAction = this.onAddAction.bind(this);
@@ -46,22 +64,34 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
 
     onActionChanged(id: number, action: ActionData) {
         this.setState((state) => {
-            let arr = state.actions;
-            arr[id] = action;
+            let arr = [...state.actions];
+            const index = arr.findIndex(v=> v.id === id);
+            arr[index] = {...arr[index], data: action};
             return {actions: arr};
         })
     }
 
     onAddAction() {
         this.setState((state) => {
-            let arr = state.actions;
-            arr.push({hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: ""})
+            let arr = [...state.actions];
+            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: ""}});
             return {actions: arr};
         })
     }
 
+    onRemoveAction(id: number) {
+        this.setState((state) => {
+            const actions = [...state.actions];
+            const index = actions.findIndex(v => v.id === id);
+            if(index !== -1) {
+                actions.splice(index, 1);
+            }
+            return {actions};
+        });
+    }
+
     onComplete() {
-        this.props.onComplete(this.state.side, this.state.side2, this.state.actions);
+        this.props.onComplete(this.state.side, this.state.side2, this.state.actions.map(v=>v.data));
     }
 
     onSave() {
@@ -103,7 +133,6 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
             return;
         }
         let names = JSON.parse(namesString) as string[];
-        console.log("onLoad", names);
         this.setState({
             loadShowing: true,
             saves: names
@@ -126,7 +155,7 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
             loadShowing: false,
             side: data.side,
             side2: data.side2,
-            actions: data.actions
+            actions: data.actions.map(v => ({id: this.maxActionId++, data: v}))
         });
     }
 
@@ -166,8 +195,8 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
                     this.state.currentPage === "actions" ? 
                         <div className="actions-view">
                             {
-                                this.state.actions.map((action, id) => {
-                                    return <ActionInfoView action={action} onActionChanged={this.onActionChanged.bind(this, id)} key={id}/>
+                                this.state.actions.map((action) => {
+                                    return <ActionInfoView action={action.data} onActionChanged={this.onActionChanged.bind(this, action.id)} key={action.id} onActionDeleted={() => this.onRemoveAction(action.id)}/>
                                 })
                             }
                             <div className="field">

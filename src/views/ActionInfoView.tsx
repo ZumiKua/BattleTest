@@ -6,6 +6,7 @@ import { Field } from "./Field";
 interface Props{
     action: ActionData;
     onActionChanged: (action: ActionData) => void;
+    onActionDeleted: () => void;
 }
 
 export class ActionInfoView extends React.Component<Props> {
@@ -123,6 +124,11 @@ export class ActionInfoView extends React.Component<Props> {
                         }
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <div className="is-grouped-right is-grouped field">
+                <div className="control">
+                    <button className="button is-danger" onClick={this.props.onActionDeleted}>删除</button>
                 </div>
             </div>
         </div>
