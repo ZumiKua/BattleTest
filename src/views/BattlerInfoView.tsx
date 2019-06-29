@@ -81,8 +81,8 @@ export class BattlerInfoView extends React.Component<Props, {}>{
                 </div>
                 <div className="field-body">
                     {
-                        [Attribute.Earth, Attribute.Electric, Attribute.Fire, Attribute.Water, Attribute.Wind].map((attribute: Attribute, i: number) => {
-                            return <div className="field">
+                        [Attribute.Earth, Attribute.Electric, Attribute.Fire, Attribute.Water, Attribute.Wind].map((attribute: Attribute) => {
+                            return <div className="field" key={attribute}>
                                 <p className="control has-icons-left">
                                     <input type="number" className="input" value={this.props.battler.attributeResistances[attribute]} onChange={this.handleAttributeChange.bind(this, attribute)} placeholder={ATTRIBUTE_NAME[attribute]}/>
                                     <span className="icon is-small is-left">

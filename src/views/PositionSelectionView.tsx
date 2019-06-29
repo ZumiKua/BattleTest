@@ -12,12 +12,12 @@ export function PositionSelectionView(props: Props) {
     return <table className="position-selector">
         <tbody>
             {
-                [0,1,2].map(x => <tr>
+                [0,1,2].map(x => <tr key={x}>
                     {
                         (x === 0 && !props.isLeft) ? <td className="frontline" rowSpan={3}>前线</td> : null
                     }
                     {
-                        col.map(y => <td className={x * 2 + y === props.currentPosition ? "selected" : ""} onClick={() => props.onPositionChange((x * 2 + y) as Pos) }></td>)
+                        col.map(y => <td key={y} className={x * 2 + y === props.currentPosition ? "selected" : ""} onClick={() => props.onPositionChange((x * 2 + y) as Pos) }></td>)
                     }
                     {
                         (x === 0 && props.isLeft) ? <td className="frontline" rowSpan={3}>前线</td> : null
