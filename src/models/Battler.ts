@@ -87,3 +87,4 @@ export interface BattlerData{
     attributeResistances: {[key in Attribute]: number};
     position: 0|1|2|3|4|5;
 }
+export type Position = 0|1|2|3|4|5;

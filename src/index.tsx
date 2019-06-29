@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {HashRouter as Router } from "react-router-dom";
+import "bulma";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 ReactDOM.render(<Router><App /></Router>, document.getElementById('root'));
 

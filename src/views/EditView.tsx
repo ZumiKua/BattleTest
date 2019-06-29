@@ -19,7 +19,7 @@ interface Props{
     onComplete: (sideA: SideData, sideB: SideData, actions: ActionData[]) => void;
 }
 
-export class EditView extends React.Component<Props, {side: SideData, side2: SideData, actions: ActionData[], loadShowing: boolean, saves: string[]}>{
+export class EditView extends React.Component<Props, {side: SideData, side2: SideData, actions: ActionData[], loadShowing: boolean, saves: string[], currentPage: "sides" | "actions"}>{
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -27,7 +27,8 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
             side2: {hp:0, sp:0, battlers: []},
             actions: [],
             loadShowing: false,
-            saves: []
+            saves: [],
+            currentPage: "sides" 
         }
         this.handleSideChanged = this.handleSideChanged.bind(this);
         this.handleSide2Changed = this.handleSide2Changed.bind(this);
@@ -102,6 +103,7 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
             return;
         }
         let names = JSON.parse(namesString) as string[];
+        console.log("onLoad", names);
         this.setState({
             loadShowing: true,
             saves: names
@@ -130,26 +132,64 @@ export class EditView extends React.Component<Props, {side: SideData, side2: Sid
 
     render() {
         return <React.Fragment>
-            <div className="platform">
-                <div className="sides-info-view">
-                    <SideInfoView side={this.state.side} onSideChanged={this.handleSideChanged}/>
-                    <p className="vs">VS</p>
-                    <SideInfoView side={this.state.side2} onSideChanged={this.handleSide2Changed} />
+            <div className="container">
+                <div className="tabs">
+                    <ul>
+                        <li className={this.state.currentPage === "sides" ? "is-active" : ""}>
+                            <a onClick={(e) => {e.preventDefault(); this.setState({currentPage: "sides"});}}>角色</a>
+                        </li>
+                        <li className={this.state.currentPage === "actions" ? "is-active" : ""}>
+                            <a onClick={(e) => {e.preventDefault(); this.setState({currentPage: "actions"});}}>行为</a>
+                        </li>
+                    </ul>
                 </div>
-                <div className="actions-view">
-                    <p>行动:</p>
-                    {
-                        this.state.actions.map((action, id) => {
-                            return <ActionInfoView action={action} onActionChanged={this.onActionChanged.bind(this, id)} key={id}/>
-                        })
-                    }
-                    <button onClick={this.onAddAction}>+</button>
-                </div>
-                <div className="footer-view">
-                    <Link to="/battle" onClick={this.onComplete}>完成</Link>
-                    {/* <button onClick={this.onComplete}>完成</button> */}
-                    <button onClick={() => this.onSave()}>保存</button>
-                    <button onClick={() => this.onLoad()}>读取</button>
+                {
+                    this.state.currentPage === "sides" ? 
+                        <div className="sides-view">
+                            <div className="columns edit-view-troop-headers">
+                                <div className="column edit-view-troop-header red"><p>红方</p></div>
+                                <div className="column edit-view-troop-header blue"><p>蓝方</p></div>
+                            </div>
+                            
+                            <div className="columns side-info-views">
+                                <SideInfoView side={this.state.side} onSideChanged={this.handleSideChanged} isLeft={true}/>
+                                
+                                <SideInfoView side={this.state.side2} onSideChanged={this.handleSide2Changed} isLeft={false}/>
+                            </div>
+                        </div> 
+                    :
+                         null
+                }
+                
+
+                {
+                    this.state.currentPage === "actions" ? 
+                        <div className="actions-view">
+                            {
+                                this.state.actions.map((action, id) => {
+                                    return <ActionInfoView action={action} onActionChanged={this.onActionChanged.bind(this, id)} key={id}/>
+                                })
+                            }
+                            <div className="field">
+                                <button className="button" onClick={this.onAddAction}>添加</button>
+                            </div>
+                            
+                        </div>
+                    :
+                        null
+                }
+                
+                <div className="footer-view field is-grouped">
+                    <p className="control">
+                        <Link className="button is-primary" to="/battle" onClick={this.onComplete}>完成</Link>
+                    </p>
+                    <p className="control">
+                        <button className="button" onClick={() => this.onSave()}>保存</button>
+                    </p>
+                    <p className="control">
+                        <button className="button" onClick={() => this.onLoad()}>读取</button>
+                    </p>
+                    
                 </div>
             </div>
             {

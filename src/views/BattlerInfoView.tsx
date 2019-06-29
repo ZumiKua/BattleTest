@@ -1,6 +1,8 @@
 import React, { ChangeEvent } from "react";
 import { Attribute } from "../models/Attribute";
-import { BattlerData } from "../models/Battler";
+import { BattlerData, Position } from "../models/Battler";
+import { Field } from "./Field";
+import { PositionSelectionView } from "./PositionSelectionView";
 
 const ATTRIBUTE_NAME = {
     [Attribute.Earth]: "土",
@@ -9,9 +11,23 @@ const ATTRIBUTE_NAME = {
     [Attribute.Water]: "水",
     [Attribute.Wind]: "风"
 }
+const ICON_NAME = {
+    [Attribute.Earth]: "fa-mountain",
+    [Attribute.Electric]: "fa-bolt",
+    [Attribute.Fire]: "fa-fire",
+    [Attribute.Water]: "fa-tint",
+    [Attribute.Wind]: "fa-wind"
+}
 
-export class BattlerInfoView extends React.Component<{battler: BattlerData, onBattlerChanged: (battler: BattlerData) => void}, {}>{
-    constructor(props: {battler: BattlerData, onBattlerChanged: (battler: BattlerData) => void}) {
+interface Props{
+    isLeft: boolean;
+    battler: BattlerData;
+    onBattlerChanged: (battler: BattlerData) => void;
+    onBattlerDeleted: () => void
+}
+
+export class BattlerInfoView extends React.Component<Props, {}>{
+    constructor(props: Props) {
         super(props);
         this.handleDpChange = this.handleDpChange.bind(this);
         this.handlePositionChange = this.handlePositionChange.bind(this);
@@ -25,13 +41,9 @@ export class BattlerInfoView extends React.Component<{battler: BattlerData, onBa
         this.props.onBattlerChanged(battler);
     }
 
-    handlePositionChange(e: ChangeEvent<HTMLInputElement>) {
-        let pos = Number.parseInt(e.target.value);
-        if(pos >= 0 && pos < 6) {
-            let battler = this.copyBattler(this.props.battler);
-            battler.position = pos as any;
-            this.props.onBattlerChanged(battler);
-        }
+    handlePositionChange(pos: Position) {
+        let battler = {...this.props.battler, position: pos};
+        this.props.onBattlerChanged(battler);
     }
 
     handleNameChange(e: ChangeEvent<HTMLInputElement>) {
@@ -51,17 +63,42 @@ export class BattlerInfoView extends React.Component<{battler: BattlerData, onBa
     }
 
     render() {
-        return <div className="battler-info">
-            <p>DP: <input type="number" onChange={this.handleDpChange} value={this.props.battler.dp} /></p>
-            <p>位置: <input type="number" onChange={this.handlePositionChange} value={this.props.battler.position} min="0" max="5"/></p>
-            <p>名称: <input type="text" onChange={this.handleNameChange} value={this.props.battler.name}/></p>
-            <div>
-                <p>抗性</p>
-                {
-                    [Attribute.Earth, Attribute.Electric, Attribute.Fire, Attribute.Water, Attribute.Wind].map((attribute: Attribute, i: number) => {
-                        return <p key={i}>{ATTRIBUTE_NAME[attribute]}<input value={this.props.battler.attributeResistances[attribute]} onChange={this.handleAttributeChange.bind(this, attribute)}/></p>
-                    })
-                }
+        return <div className="battler-info-view">
+            <Field label="DP:" type="number" onChange={this.handleDpChange} value={this.props.battler.dp} />
+            <div className="field is-horizontal">
+                <div className="field-label is-normal">
+                    <label className="label">位置</label>
+                </div>
+                <div className="field-body">
+                    <PositionSelectionView isLeft={this.props.isLeft} currentPosition={this.props.battler.position} onPositionChange={pos => this.handlePositionChange(pos)}/>
+                </div>
+            </div>
+            <Field label="名称:" type="text" onChange={this.handleNameChange} value={this.props.battler.name} />
+        
+            <div className="field is-horizontal">
+                <div className="field-label">
+                    <label className="label">抗性</label>
+                </div>
+                <div className="field-body">
+                    {
+                        [Attribute.Earth, Attribute.Electric, Attribute.Fire, Attribute.Water, Attribute.Wind].map((attribute: Attribute, i: number) => {
+                            return <div className="field">
+                                <p className="control has-icons-left">
+                                    <input type="number" className="input" value={this.props.battler.attributeResistances[attribute]} onChange={this.handleAttributeChange.bind(this, attribute)} placeholder={ATTRIBUTE_NAME[attribute]}/>
+                                    <span className="icon is-small is-left">
+                                        <i className={"fas " + ICON_NAME[attribute]}></i>
+                                    </span>
+                                </p>
+                            </div>
+                        })
+                    }
+                </div>
+            </div>
+        
+            <div className="is-grouped-right is-grouped field">
+                <div className="control">
+                    <button className="button is-danger" onClick={this.props.onBattlerDeleted}>删除</button>
+                </div>
             </div>
         </div>
     }

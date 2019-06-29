@@ -1,188 +1,110 @@
-.App {
+.edit-view-troop-headers{
+  margin-bottom: 0px;
+}
+
+.edit-view-troop-header p{
+  border-radius: 10px 10px 0px 0px;
   text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.hidden{
-  display: none
-}
-
-.side-view{
-  padding: 10px 10px 10px 10px;
-  width: 45%;
-  background-color: #0000001F;
-}
-
-.platform{
-  display: flex;
-  width: 950px;
-  margin: auto;
-  flex-wrap: wrap;
-}
-
-.vs{
-  font-size: 2em;
-  margin-left: 1em;
-  margin-right: 1em;
-}
-
-.battler-info {
-  margin-left: 4em;
-  border: #0000001F solid 1px;
-  padding: 1em;
-  margin-top: 10px;
-}
-
-.sides-info-view{
-  display: flex;
-  width: 100%;
-  margin: auto;
-}
-
-.sides-info-view>div:first-child{
-  flex-grow: 1;
-}
-
-.sides-info-view>div:last-child{
-  flex-grow: 1;
-}
-
-.actions-view {
-  width: 100%;
-  border-top: #0000001F solid 1px;
-  margin-top: 10px;
-}
-
-.action-view{
-  border: #0000001F solid 1px;
-  margin: 10px;
-}
-
-.target-cell {
-  width: 2em;
-  height: 1em;
-}
-
-.highlighted.target-cell{
-  background-color: lightgray;
-}
-
-.target-table{
-  border:1px solid black;
-}
-
-
-.target-table td {
-  border: 1px solid black;
-}
-
-.modal-container.show {
-  display: block;
-}
-
-.modal-container{
-  background-color: #00000080;
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  left: 0;
-  top: 0;
-}
-
-.modal {
-  margin: 15% auto;
-  background-color: #FFFFFF;
-  padding: 10px;
-}
-
-.action:hover {
-  background-color: lightgray;
-}
-
-.action {
-  padding: 1em;
-  border: #000 solid 1px;
-}
-
-.actions {
-  width: 10em;
-}
-
-.target{
-  width: fit-content;
-}
-
-.modal-header{
-  display: flex;
-}
-.modal-title {
-  flex-grow: 1;
+  text-shadow: 1px 1px 2px #EEEEEE;
   font-weight: bold;
+  font-size: 1.5rem;
+  padding: 1.25rem 0;
 }
 
-.battler:hover{
-  background-color: lightblue;
+.edit-view-troop-header.red p{
+  background-color: #FF6666;
 }
 
-.action-records{
-  width: 45%;
+.edit-view-troop-header.blue p{
+  background-color: #6666FF;
 }
 
-.action-record{
-  display: flex;
+.side-info-views>div>.side-info-view{
+  border-radius: 0px 0px 10px 10px;
+  margin-top: -1.5rem;
+  padding: 1.5rem;
 }
 
-.action-record .action-record-action-name {
-  margin-left: 1em;
-  flex-grow: 1;
+.side-info-views>div:first-child>.side-info-view{
+  background-color: #FFEEEE;
+  
 }
 
-.anchor-like-button {
-  background:none;
-     color:inherit;
-     border:none; 
-     padding:0!important;
-     font: inherit;
-     /*border is optional*/
-     border-bottom:1px solid #444; 
-     cursor: pointer;
+.side-info-views>div:last-child>.side-info-view{
+  border-radius: 0px 0px 10px 10px;
+  background-color: #EEEEFF;
+}
+
+.battler-info-view{
+  margin-left: 2rem;
+  padding: 1rem;
+}
+
+.battlers-view>.battler-info-view:not(:first-of-type) {
+  border-top: 1px solid lightgray;
+}
+
+.footer-view{
+  margin-top: 1rem;
+}
+
+.actions-view .action-view {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.actions-view .action-view:not(:first-of-type) {
+  border-top: 1px solid lightgray;
+}
+
+.action-info-target-cell{
+  width: 1rem;
+  height: 1rem;
+  background: #EEEEEE;
+  border: 1px #DDDDDD solid;
+}
+
+.action-info-target-table{
+  border-collapse: separate;
+}
+
+.action-info-target-cell.center{
+  border: 1px #555555 solid;
+  z-index: 100;
+}
+
+.action-info-target-cell:hover:not(.checked){
+  background: #CCCCCC;
+}
+
+.action-info-target-cell.checked{
+  background: #888888;
 }
 
 .load-names:hover{
-  background-color: lightgray;
+  background: #DDDDDD;
 }
 
-.load-dialog {
-  width: 50%;
+.load-names {
+  cursor: pointer;
+}
+
+.position-selector td {
+  width: 1rem;
+  height: 1rem;
+  background: #EEEEEE;
+  border: 1px #DDDDDD solid;
+}
+
+.position-selector td.selected{
+  background: #FF6666;
+}
+
+.position-selector td:hover:not(.selected):not(.frontline){
+  background: #CCCCCC;
+}
+
+.position-selector td.frontline{
+  writing-mode: vertical-lr;
 }
