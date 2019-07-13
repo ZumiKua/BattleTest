@@ -6,10 +6,11 @@ import { Action, Attack } from "../models/Action";
 import { Subscription } from "rxjs";
 import { SideView } from "./SideView";
 import { TargetView } from "./TargetView";
-import { Battler } from "../models/Battler";
+import { Battler, FlatPosToXY, Position } from "../models/Battler";
 import { ResultView } from "./ResultView";
 import { ActionSelectionView } from "./ActionSelectionView";
 import { ActionRecordsView } from "./ActionRecordsView";
+import { Redirect } from "react-router";
 
 interface Props{
     sideA: SideData | undefined;
@@ -100,8 +101,8 @@ export class BattleView extends React.Component<Props, State>{
         this.battleVM!.addAction(action);
     }
 
-    onTargetSelected(target: [number, number]) {
-        this.battleVM!.setTarget(target);
+    onTargetSelected(target: Position, isLeft: boolean) {
+        this.battleVM!.setTarget(FlatPosToXY(target), isLeft);
     }
 
     onBattlerSelected(battler: Battler) {
@@ -127,7 +128,7 @@ export class BattleView extends React.Component<Props, State>{
     render() {
         this.recreateBattleVM();
         if(this.battleVM === undefined) {
-            return <React.Fragment/>
+            return <Redirect to="/"/>
         }
         let actions = null;
         console.log(this.state.inputtingPhase);
@@ -137,16 +138,21 @@ export class BattleView extends React.Component<Props, State>{
         }
         let target = null;
         if(this.state.inputtingPhase === "decideTarget") {
-            target = <TargetView battlers={this.battleVM.targets!} onTargetSelected={this.onTargetSelected} areas={this.battleVM.inputtingAction!.targetArea} onClose={this.onTargetSelectionClosed}/>
+            target = <TargetView battlersLeft={this.battleVM.sideA.battlers} battlersRight={this.battleVM.sideB.battlers} onTargetSelected={this.onTargetSelected} areas={this.battleVM.inputtingAction!.targetArea} onClose={this.onTargetSelectionClosed}/>
         }
-        return <div>
-            <SideView side={this.battleVM!.sideA} onBattlerClick={this.onBattlerSelected}/>
-            <SideView side={this.battleVM!.sideB} onBattlerClick={this.onBattlerSelected}/>
+        return <div className="container battle-view">
+            <div className="columns">
+                <SideView isRed={true} side={this.battleVM!.sideA} onBattlerClick={this.onBattlerSelected}/>
+                <SideView isRed={false} side={this.battleVM!.sideB} onBattlerClick={this.onBattlerSelected}/>
+            </div>
             <ActionRecordsView actions={this.state.actions} onActionDeleted={this.onActionDeleted} />
-            {
-                this.state.phase === "inputting" ? <button onClick={() => this.onEndTurn()}>结束回合</button> : null
-            }
-            <div className={`modal-container ${actions !== null || target !== null ? "show" : ""}`}>                 
+            <div className="control">
+                {
+                    this.state.phase === "inputting" ? <button className="button" onClick={() => this.onEndTurn()}>结束回合</button> : null
+                }
+            </div>
+            
+            <div className={`modal-container ${actions !== null || target !== null ? "show" : ""}`}>
                 {
                     actions !== null ? actions : <React.Fragment />
                 }

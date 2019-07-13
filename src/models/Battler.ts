@@ -7,7 +7,7 @@ export class Battler{
     private currentAttribute: {attribute: Attribute | null, point: number}
     private weakState: boolean;
     private thisTurnDpDamaged: boolean;
-    position: number;
+    position: Position;
     name: string;
     id: number;
 
@@ -88,3 +88,10 @@ export interface BattlerData{
     position: 0|1|2|3|4|5;
 }
 export type Position = 0|1|2|3|4|5;
+export function FlatPosToXY(pos: Position) : [0|1|2, 0|1]{
+    return [Math.floor(pos / 2), pos % 2] as [0|1|2, 0|1];
+}
+
+export function XYPosToFlat(x: 0|1|2, y: 0|1): Position {
+    return x * 2 + y as Position;
+}

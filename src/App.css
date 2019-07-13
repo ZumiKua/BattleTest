@@ -108,3 +108,107 @@
 .position-selector td.frontline{
   writing-mode: vertical-lr;
 }
+
+/* ------ */
+
+.side-view>div{
+  padding: 1.25rem;
+  border-radius: 4px;
+}
+
+.side-view.red>div{
+  background-color: #FFEEEE;
+}
+
+.side-view.blue>div{
+  background-color: #EEEEFF;
+}
+
+.battle-field-view td{
+  width: 5rem;
+  height: 5rem;
+  border: 1px #DDDDDD solid;
+  vertical-align: middle;
+  position: relative;
+}
+
+.battle-field-view td>p:first-of-type{
+  text-align: center;
+}
+
+.battle-field-view td>p:last-of-type{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.battle-field-view td.frontline {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.battle-field-view td:hover:not(.frontline){
+  background-color: #CCCCCC;
+}
+
+.battle-field-view td.frontline>span{
+  writing-mode: vertical-lr;
+}
+
+.detail-view {
+  height: 3rem;
+}
+
+.actions-selection .action {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.actions-selection .action:hover {
+  background-color: #CCCCCC;
+}
+
+.actions-selection .action>.name {
+  flex-grow: 1;
+}
+
+.actions-selection .action>.sp-cost {
+  text-align: right;
+}
+
+.target-view-table td {
+  width: 5rem;
+  height: 5rem;
+  border: 1px #DDDDDD solid;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.target-view-table td.highlighted {
+  background: #CCCCCC;
+}
+
+.action-record-action-use {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.action-record-delete {
+  position: relative;
+  right: 0px;
+}
+
+.action-records {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.action-record{
+  width: 40%;
+  display: flex;
+}
+
+.action-record .action-record-action-name {
+  flex-grow: 1;
+}

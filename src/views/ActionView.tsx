@@ -8,10 +8,10 @@ interface Props{
 }
 
 export function ActionView(props: Props) {
-    return <p onClick={() => props.onClicked(props.action)} className="action">
-        <span>{props.action.name}</span> 
+    return <p className="action" onClick={() => props.onClicked(props.action)}>
+        <span className="name">{props.action.name}</span> 
         &nbsp;
-        <span><b>SP消耗:</b>{props.action.spCost}</span>
+        <span className="sp-cost"><b>SP消耗:</b>{props.action.spCost}</span>
     </p>
 
 }

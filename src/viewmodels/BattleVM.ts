@@ -85,10 +85,11 @@ export class BattleVM {
         return true;
     }
 
-    setTarget(target: [number, number]) {
+    setTarget(target: [number, number], isLeft: boolean) {
         if(this._inputtingAction!.spCost <= this._currentInputtingBattler!.side.sp) {
             this._currentInputtingBattler!.side.sp -= this._inputtingAction!.spCost;
-            this._actions.value.push(new Action(this._inputtingAction!, this._currentInputtingBattler!, target, this._nextActionId));
+            const side = isLeft ? this.sideA : this.sideB;
+            this._actions.value.push(new Action(this._inputtingAction!, this._currentInputtingBattler!, target, side, this._nextActionId));
             ++this._nextActionId;
         }
         this._inputtingPhase.next("decideBattler");

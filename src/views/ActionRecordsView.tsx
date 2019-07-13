@@ -10,8 +10,9 @@ export function ActionRecordsView(props: Props) {
         {
             props.actions.map(action => <p key={action.id} className="action-record">
                 <span>{action.user.name}</span>
-                <span className="action-record-action-name">{action.data.name}</span>
-                <button className="anchor-like-button action-record-delete" onClick={e=>{e.preventDefault(); props.onActionDeleted(action.id)} }>X</button>
+                <span className="action-record-action-use">使用了</span>
+                <span className="action-record-action-name">{action.data.name}</span> 
+                <button className="delete action-record-delete" onClick={e=>{e.preventDefault(); props.onActionDeleted(action.id)} }>X</button>
             </p>)
         }
     </div>

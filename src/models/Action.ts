@@ -1,5 +1,5 @@
 import { Battler, AttributeDamageResult } from "./Battler";
-import { HpDamageResult, DamageMultiplierResult  } from "./Side";
+import { HpDamageResult, DamageMultiplierResult, Side  } from "./Side";
 import { ActionData } from "./ActionData";
 
 export class Action{
@@ -9,13 +9,15 @@ export class Action{
     id: number;
     private attack: Attack | null;
     private targetPoint: [number, number];
+    targetSide: Side;
 
-    constructor(ad: ActionData, user: Battler, target: [number, number], id: number) {
+    constructor(ad: ActionData, user: Battler, target: [number, number], targetSide: Side, id: number) {
         this.data = ad;
         this.targets = null;
         this.attack = null;
         this.user = user;
         this.targetPoint = target;
+        this.targetSide = targetSide;
         this.id = id;
     }
 
@@ -28,7 +30,7 @@ export class Action{
             return false;
         }
         if(this.targets === null) {
-            let side = this.user.side.opponent;
+            let side = this.targetSide;
             this.targets = this.data.targetArea.map(point => {
                 let x = (this.targetPoint[0] + point[0]);
                 let y = (this.targetPoint[1] + point[1]);
