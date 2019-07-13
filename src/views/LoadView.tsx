@@ -3,6 +3,7 @@ interface Props{
     saves: string[];
     onClosed: () => void;
     onLoad: (name: string) => void;
+    onDelete: (name: string) => void;
 }
 
 export function LoadView(props: Props) {
@@ -20,7 +21,7 @@ export function LoadView(props: Props) {
                     <ol>
                         {
                             props.saves.map((name, id) => 
-                                <li className="load-names" key={id} onClick={() => props.onLoad(name)}>{name}</li>
+                                <li className="load-name" key={id} onClick={() => props.onLoad(name)}><span>{name}</span> <button className="delete" onClick={(e) => {props.onDelete(name); e.stopPropagation();}}></button></li>
                             )
                         }
                     </ol>

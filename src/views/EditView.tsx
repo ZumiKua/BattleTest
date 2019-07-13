@@ -6,6 +6,7 @@ import { ActionInfoView } from "./ActionInfoView";
 import { Attribute } from "../models/Attribute";
 import { LoadView } from "./LoadView";
 import { Link } from "react-router-dom";
+import { returnStatement } from "@babel/types";
 
 const META_ITEM = "_saveMetaItem";
 
@@ -143,7 +144,43 @@ export class EditView extends React.Component<Props, State>{
         this.setState({loadShowing: false})
     }
 
+    onDeleteSave(name: string) {
+        const nameString = localStorage.getItem(META_ITEM);
+        if(nameString === null) {
+            console.log("name string not exist");
+            alert("读取错误！");
+            this.setState({loadShowing: false});
+            return;
+        }
+        let names = JSON.parse(nameString) as string[];
+        const index = names.indexOf(name);
+        if(index === -1) {
+            console.log("not found");
+            alert("读取错误！");
+            this.setState({loadShowing: false});
+            return;
+        }
+        names.splice(index);
+
+        localStorage.setItem(META_ITEM, JSON.stringify(names));
+        localStorage.removeItem(name);
+
+        if(names.length === 0) {
+            this.setState({
+                loadShowing: false,
+                saves: names
+            });
+        }
+        else {
+            this.setState({
+                loadShowing: true,
+                saves: names
+            });
+        }
+    }
+
     onLoadSelected(name: string) { 
+        console.log("loading " + name);
         const dataString = localStorage.getItem(name);
         if(dataString === null) {
             alert("读取错误！");
@@ -223,7 +260,7 @@ export class EditView extends React.Component<Props, State>{
             </div>
             {
                 this.state.loadShowing ? 
-                    <LoadView saves={this.state.saves} onClosed={() => this.onLoadCanceled()} onLoad={(name) => this.onLoadSelected(name)} /> : null
+                    <LoadView saves={this.state.saves} onClosed={() => this.onLoadCanceled()} onLoad={(name) => this.onLoadSelected(name)} onDelete={(name) => this.onDeleteSave(name)}/> : null
             }
         </React.Fragment>
     }

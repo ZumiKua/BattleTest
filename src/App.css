@@ -82,12 +82,17 @@
   background: #888888;
 }
 
-.load-names:hover{
+.load-name:hover{
   background: #DDDDDD;
 }
 
-.load-names {
+.load-name {
   cursor: pointer;
+  display: flex;
+}
+
+.load-name span {
+  flex-grow: 1;
 }
 
 .position-selector td {
