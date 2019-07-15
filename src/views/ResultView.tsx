@@ -20,10 +20,20 @@ export function ResultView(props: Props) {
             伤害提升率上涨了: {props.result.damageMultiplierResult.multiplierAdded}
         </p>
     }
+    let dpRcovery = null;
+    if(props.result.dpRecoveryResult !== 0) {
+        dpRcovery = <p>DP回复了：{props.result.dpRecoveryResult} </p>
+    }
+    let spRecovery = null;
+    if(props.result.spRecoveryResult !== 0) {
+        spRecovery = <p>SP回复了：{props.result.spRecoveryResult} </p>
+    }
     return <div>
         <p>{props.result.action.user.name} 对 {props.result.target.name} 使用了 {props.result.action.data.name}</p>
         <p>造成了 {props.result.hpDamageResult.hpDamage} 点伤害 {props.result.hpDamageResult.isDead ? "对面已死亡" : ""}</p>
         {attribute}
         {damageMultipiler}
+        {dpRcovery}
+        {spRecovery}
     </div>
 }

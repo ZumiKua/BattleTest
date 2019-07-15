@@ -1,6 +1,7 @@
 import {Attribute} from "./Attribute"
 import { Side } from "./Side";
 export class Battler{
+    maxDp: number;
     dp: number;
     attributeResistances: {[key in Attribute]: number}
     side: Side;
@@ -15,6 +16,7 @@ export class Battler{
         this.position = data.position;
         this.side = side;
         this.dp = data.dp;
+        this.maxDp = data.dp;
         this.attributeResistances = data.attributeResistances;
         this.currentAttribute = {attribute: null, point: 0};
         this.weakState = false;
@@ -61,6 +63,19 @@ export class Battler{
         return result;
     }
 
+    applyDpRecovery(dpRecovery: number): DpRecoveryResult {
+        const oldDp = this.dp;
+        this.dp += dpRecovery;
+        if(this.dp >= this.maxDp){
+            this.dp = this.maxDp;
+        }
+        if(this.dp < 0) {
+            this.dp = 0;
+        }
+        
+        return this.dp - oldDp;
+    }
+
     onTurnStart() : void{
         this.thisTurnDpDamaged = false;
         this.weakState = false;
@@ -95,3 +110,5 @@ export function FlatPosToXY(pos: Position) : [0|1|2, 0|1]{
 export function XYPosToFlat(x: 0|1|2, y: 0|1): Position {
     return x * 2 + y as Position;
 }
+
+export type DpRecoveryResult = number;

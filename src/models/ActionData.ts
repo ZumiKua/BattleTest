@@ -7,4 +7,6 @@ export interface ActionData{
     attribute: Attribute;
     attributeDamage: number;
     name: string;
+    dpRecovery: number;
+    spRecovery: number;
 }

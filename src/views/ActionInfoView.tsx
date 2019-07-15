@@ -10,30 +10,20 @@ interface Props{
 }
 
 export class ActionInfoView extends React.Component<Props> {
-    private action: ActionData;
+
     constructor(props: Props) {
         super(props);
-        this.action = {spCost: 0, hpDamage: 0, attribute: Attribute.Fire, attributeDamage: 0, targetArea: [], name: ""};
         this.onAttributeChanged = this.onAttributeChanged.bind(this);
         this.onAttributeDamageChanged = this.onAttributeDamageChanged.bind(this);
         this.onHpDamageChanged = this.onHpDamageChanged.bind(this);
         this.onSpCostChanged = this.onSpCostChanged.bind(this);
         this.onNameChanged = this.onNameChanged.bind(this);
-    }
-
-    copyAction(action: ActionData) {
-        this.action.spCost = action.spCost;
-        this.action.targetArea = action.targetArea;
-        this.action.hpDamage = action.hpDamage;
-        this.action.attribute = action.attribute;
-        this.action.attributeDamage = action.attributeDamage;
-        this.action.name = action.name;
-        return this.action;
+        this.onDpRecoveryChanged = this.onDpRecoveryChanged.bind(this);
+        this.onSpRecoveryChanged = this.onSpRecoveryChanged.bind(this);
     }
 
     handleAreaClicked(x: number, y: number) {
-        console.log("handleAreaClicked", x, y);
-        let action = this.copyAction(this.props.action);
+        let action = {...this.props.action, targetArea: [...this.props.action.targetArea]};
         let existed = action.targetArea.findIndex(v => v[0] === x && v[1] === y);
         if(existed >= 0) {
             action.targetArea.splice(existed, 1);
@@ -49,32 +39,37 @@ export class ActionInfoView extends React.Component<Props> {
     }
 
     onAttributeChanged(e: ChangeEvent<HTMLSelectElement>) {
-        let action = this.copyAction(this.props.action);
-        action.attribute = Number.parseInt(e.target.value);
+        let action = {...this.props.action, attribute: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
 
     onHpDamageChanged(e: ChangeEvent<HTMLInputElement>) {
-        let action = this.copyAction(this.props.action);
-        action.hpDamage = Number.parseInt(e.target.value);
+        let action = {...this.props.action, hpDamage: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
 
     onSpCostChanged(e: ChangeEvent<HTMLInputElement>) {
-        let action = this.copyAction(this.props.action);
-        action.spCost = Number.parseInt(e.target.value);
+        let action = {...this.props.action, spCost: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
 
     onAttributeDamageChanged(e: ChangeEvent<HTMLInputElement>) {
-        let action = this.copyAction(this.props.action);
-        action.attributeDamage = Number.parseInt(e.target.value);
+        let action = {...this.props.action, attributeDamage: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
 
     onNameChanged(e: ChangeEvent<HTMLInputElement>) {
-        let action = this.copyAction(this.props.action);
-        action.name = e.target.value;
+        let action = {...this.props.action, name: e.target.value};
+        this.props.onActionChanged(action);
+    }
+
+    onDpRecoveryChanged(e: ChangeEvent<HTMLInputElement>) {
+        let action = {...this.props.action, dpRecovery: Number.parseInt(e.target.value)};
+        this.props.onActionChanged(action);
+    }
+
+    onSpRecoveryChanged(e: ChangeEvent<HTMLInputElement>) {
+        let action = {...this.props.action, spRecovery: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
 
@@ -88,6 +83,8 @@ export class ActionInfoView extends React.Component<Props> {
             <Field label="HP伤害" type="number" value={this.props.action.hpDamage} onChange={this.onHpDamageChanged} />
             <Field label="SP消耗" type="number" value={this.props.action.spCost} onChange={this.onSpCostChanged} />
             <Field label="属性伤害" type="number" value={this.props.action.attributeDamage} onChange={this.onAttributeDamageChanged} />
+            <Field label="DP回复" type="number" value={this.props.action.dpRecovery} onChange={this.onDpRecoveryChanged} />
+            <Field label="AP回复" type="number" value={this.props.action.spRecovery} onChange={this.onSpRecoveryChanged} />
             <div className="field is-horizontal">
                 <div className="field-label is-normal">
                     <label className="label">属性</label>
@@ -102,7 +99,7 @@ export class ActionInfoView extends React.Component<Props> {
                                     <option value={Attribute.Fire}>火</option>
                                     <option value={Attribute.Water}>水</option>
                                     <option value={Attribute.Wind}>风</option>
-                                </select>
+                                </select> 
                             </div>
                         </div>
                     </div>

@@ -2,6 +2,7 @@ import { Battler, BattlerData } from "./Battler";
 import { Action } from "./Action";
 
 export class Side{
+    
     opponent: Side | null;
     damageMultiplier: number;
     thisActionDamageMultiplier: number;
@@ -38,6 +39,18 @@ export class Side{
         return {hpDamage: hpDamage, isDead: this.hp === 0};
     }
 
+    applySpRecovery(spRecovery: number): SpRecoveryResult {
+        const oldSp = this.sp;
+        this.sp += spRecovery;
+        if(this.sp >= 10) {
+            this.sp = 10;
+        }
+        if(this.sp < 0) {
+            this.sp = 0;
+        }
+        return this.sp - oldSp;
+    }
+
     onDamageWeakState(action: Action): DamageMultiplierResult {
         let ret = {multiplierAdded: this.damageMultiplierDelta};
         this.thisActionDamageMultiplier += this.damageMultiplierDelta;
@@ -67,6 +80,8 @@ export interface HpDamageResult{
     hpDamage: number;
     isDead: boolean;
 }
+
+export type SpRecoveryResult = number;
 
 export interface SideData{
     battlers: BattlerData[];

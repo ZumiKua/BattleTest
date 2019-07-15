@@ -6,9 +6,8 @@ import { ActionInfoView } from "./ActionInfoView";
 import { Attribute } from "../models/Attribute";
 import { LoadView } from "./LoadView";
 import { Link } from "react-router-dom";
-import { returnStatement } from "@babel/types";
 
-const META_ITEM = "_saveMetaItem";
+const META_ITEM = "_saveMetaItem_V2";
 
 interface SaveData{
     side: SideData;
@@ -75,7 +74,7 @@ export class EditView extends React.Component<Props, State>{
     onAddAction() {
         this.setState((state) => {
             let arr = [...state.actions];
-            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: ""}});
+            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: "", spRecovery: 0, dpRecovery: 0}});
             return {actions: arr};
         })
     }
@@ -108,7 +107,8 @@ export class EditView extends React.Component<Props, State>{
             window.alert("非法名称");
             return;
         }
-        const stateString = JSON.stringify({side: this.state.side, side2: this.state.side2, actions: this.state.actions});
+        //todo remove actions id.
+        const stateString = JSON.stringify({side: this.state.side, side2: this.state.side2, actions: this.state.actions.map(v => v.data)});
         const namesString = localStorage.getItem(META_ITEM);
         let names: string[];
         if(namesString === null) {
@@ -134,6 +134,10 @@ export class EditView extends React.Component<Props, State>{
             return;
         }
         let names = JSON.parse(namesString) as string[];
+        if(names.length === 0) {
+            alert("无存档");
+            return;
+        }
         this.setState({
             loadShowing: true,
             saves: names
@@ -147,7 +151,6 @@ export class EditView extends React.Component<Props, State>{
     onDeleteSave(name: string) {
         const nameString = localStorage.getItem(META_ITEM);
         if(nameString === null) {
-            console.log("name string not exist");
             alert("读取错误！");
             this.setState({loadShowing: false});
             return;
@@ -155,12 +158,11 @@ export class EditView extends React.Component<Props, State>{
         let names = JSON.parse(nameString) as string[];
         const index = names.indexOf(name);
         if(index === -1) {
-            console.log("not found");
             alert("读取错误！");
             this.setState({loadShowing: false});
             return;
         }
-        names.splice(index);
+        names.splice(index, 1);
 
         localStorage.setItem(META_ITEM, JSON.stringify(names));
         localStorage.removeItem(name);
@@ -180,7 +182,6 @@ export class EditView extends React.Component<Props, State>{
     }
 
     onLoadSelected(name: string) { 
-        console.log("loading " + name);
         const dataString = localStorage.getItem(name);
         if(dataString === null) {
             alert("读取错误！");
