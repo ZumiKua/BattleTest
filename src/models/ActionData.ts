@@ -9,4 +9,5 @@ export interface ActionData{
     name: string;
     dpRecovery: number;
     spRecovery: number;
+    defenceIncrease: number;
 }

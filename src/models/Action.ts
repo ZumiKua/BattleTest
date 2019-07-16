@@ -1,5 +1,5 @@
-import { Battler, AttributeDamageResult, DpRecoveryResult } from "./Battler";
-import { HpDamageResult, DamageMultiplierResult, Side, SpRecoveryResult  } from "./Side";
+import { HpDamageResult, Battler, AttributeDamageResult, DpRecoveryResult, DefenceIncreaseResult } from "./Battler";
+import { DamageMultiplierResult, Side, SpRecoveryResult  } from "./Side";
 import { ActionData } from "./ActionData";
 
 export class Action{
@@ -62,6 +62,7 @@ export class Attack{
     hpDamageResult: HpDamageResult;
     spRecoveryResult: SpRecoveryResult;
     dpRecoveryResult: DpRecoveryResult;
+    defenceIncreaseResult: DefenceIncreaseResult;
     damageMultiplierResult: DamageMultiplierResult | null;
     attributeDamageResult: AttributeDamageResult;
 
@@ -70,10 +71,11 @@ export class Attack{
         this.target = target;
         this.action = action;
         let hpDamage = this.user.side.damageMultiplier * this.action.data.hpDamage;
-        this.hpDamageResult = this.target.side.applyHpDamage(hpDamage);
+        this.hpDamageResult = this.target.applyHpDamage(hpDamage);
         this.damageMultiplierResult = null;
         this.spRecoveryResult = this.target.side.applySpRecovery(this.action.data.spRecovery);
         this.dpRecoveryResult = this.target.applyDpRecovery(this.action.data.dpRecovery);
+        this.defenceIncreaseResult = this.target.applyDefenceIncrease(this.action.data.defenceIncrease);
         //TODO: we can combine damageMultiplierResult and attributeDamageResult.
         if(this.action.data.attribute === this.target.getCurrentAttribute() && this.target.isWeakState()) {
             this.damageMultiplierResult = this.user.side.onDamageWeakState(this.action);

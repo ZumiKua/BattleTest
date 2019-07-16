@@ -30,6 +30,7 @@ function BattlerDetailView(props: {battler: Battler|undefined}){
         return <div className="detail-view"></div>
     }
     let attribute = props.battler.getCurrentAttribute();
+    console.log("BattlerDetailView", props.battler);
     return <div className="detail-view">
         <p>{props.battler.name}
             {
@@ -41,6 +42,7 @@ function BattlerDetailView(props: {battler: Battler|undefined}){
         </p>
         
         <p><b>DP:</b> {props.battler.dp}</p>
+        <p><b>抗:</b>{props.battler.defence}</p>
         {
             attribute === null ? null : 
             <p><b>{ATTRIBUTE_NAME[attribute]}</b> {props.battler.getAttributePoint()}</p>

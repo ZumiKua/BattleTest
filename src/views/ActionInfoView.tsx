@@ -20,6 +20,7 @@ export class ActionInfoView extends React.Component<Props> {
         this.onNameChanged = this.onNameChanged.bind(this);
         this.onDpRecoveryChanged = this.onDpRecoveryChanged.bind(this);
         this.onSpRecoveryChanged = this.onSpRecoveryChanged.bind(this);
+        this.onDefenceIncreaseChanged = this.onDefenceIncreaseChanged.bind(this);
     }
 
     handleAreaClicked(x: number, y: number) {
@@ -73,6 +74,11 @@ export class ActionInfoView extends React.Component<Props> {
         this.props.onActionChanged(action);
     }
 
+    onDefenceIncreaseChanged(e: ChangeEvent<HTMLInputElement>) {
+        let action = {...this.props.action, defenceIncrease: Number.parseInt(e.target.value)};
+        this.props.onActionChanged(action);
+    }
+
     getCellClassName(x: number, y: number) {
         return "action-info-target-cell" + (this.isAreaChecked(x,y) ? " checked" : "") + (x === 0 && y === 0 ? " center" : "");
     }
@@ -85,6 +91,7 @@ export class ActionInfoView extends React.Component<Props> {
             <Field label="属性伤害" type="number" value={this.props.action.attributeDamage} onChange={this.onAttributeDamageChanged} />
             <Field label="DP回复" type="number" value={this.props.action.dpRecovery} onChange={this.onDpRecoveryChanged} />
             <Field label="AP回复" type="number" value={this.props.action.spRecovery} onChange={this.onSpRecoveryChanged} />
+            <Field label="防御值增加" type="number" value={this.props.action.defenceIncrease} onChange={this.onDefenceIncreaseChanged} />
             <div className="field is-horizontal">
                 <div className="field-label is-normal">
                     <label className="label">属性</label>

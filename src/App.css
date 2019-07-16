@@ -161,7 +161,7 @@
 }
 
 .detail-view {
-  height: 3rem;
+  height: 5rem;
 }
 
 .actions-selection .action {
@@ -216,4 +216,9 @@
 
 .action-record .action-record-action-name {
   flex-grow: 1;
+}
+
+.result-view {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }

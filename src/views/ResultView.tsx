@@ -28,12 +28,18 @@ export function ResultView(props: Props) {
     if(props.result.spRecoveryResult !== 0) {
         spRecovery = <p>SP回复了：{props.result.spRecoveryResult} </p>
     }
-    return <div>
+    let defenceIncreasement = null;
+    if(props.result.defenceIncreaseResult !== 0) {
+        defenceIncreasement = <p>防御上涨了：{props.result.defenceIncreaseResult}</p>
+    }
+    return <div className="result-view">
         <p>{props.result.action.user.name} 对 {props.result.target.name} 使用了 {props.result.action.data.name}</p>
+        <p>消耗了{props.result.hpDamageResult.defended}点防御</p>
         <p>造成了 {props.result.hpDamageResult.hpDamage} 点伤害 {props.result.hpDamageResult.isDead ? "对面已死亡" : ""}</p>
         {attribute}
         {damageMultipiler}
         {dpRcovery}
         {spRecovery}
+        {defenceIncreasement}
     </div>
 }

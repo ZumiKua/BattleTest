@@ -74,7 +74,7 @@ export class EditView extends React.Component<Props, State>{
     onAddAction() {
         this.setState((state) => {
             let arr = [...state.actions];
-            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: "", spRecovery: 0, dpRecovery: 0}});
+            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: "", spRecovery: 0, dpRecovery: 0, defenceIncrease: 0}});
             return {actions: arr};
         })
     }

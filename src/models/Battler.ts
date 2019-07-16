@@ -1,5 +1,5 @@
 import {Attribute} from "./Attribute"
-import { Side } from "./Side";
+import { Side, HpDamageResult as SideHpDamageResult } from "./Side";
 export class Battler{
     maxDp: number;
     dp: number;
@@ -11,6 +11,7 @@ export class Battler{
     position: Position;
     name: string;
     id: number;
+    defence: number;
 
     constructor(side: Side, data: BattlerData) {
         this.position = data.position;
@@ -23,6 +24,7 @@ export class Battler{
         this.thisTurnDpDamaged = false;
         this.name = data.name;
         this.id = data.id;
+        this.defence = 0;
     }
 
     getCurrentAttribute() : Attribute | null { 
@@ -76,9 +78,33 @@ export class Battler{
         return this.dp - oldDp;
     }
 
+    applyDefenceIncrease(defenceIncrease: number): DefenceIncreaseResult {
+        this.defence += defenceIncrease;
+        console.log(this, defenceIncrease);
+        return defenceIncrease;
+    }
+
+    applyHpDamage(hpDamage: number): HpDamageResult {
+        let defended;
+        if(this.defence < hpDamage) {
+            defended = this.defence;
+            hpDamage -= this.defence;
+            this.defence = 0;
+            
+        }
+        else{
+            this.defence -= hpDamage;
+            defended = hpDamage;
+            hpDamage = 0;
+        }
+        return {...this.side.applyHpDamage(hpDamage), defended};
+        
+    }
+
     onTurnStart() : void{
         this.thisTurnDpDamaged = false;
         this.weakState = false;
+        this.defence = 0;
     }
 
     isDead() : boolean {
@@ -111,4 +137,9 @@ export function XYPosToFlat(x: 0|1|2, y: 0|1): Position {
     return x * 2 + y as Position;
 }
 
+export interface HpDamageResult extends SideHpDamageResult{
+    defended: number;
+}
+
 export type DpRecoveryResult = number;
+export type DefenceIncreaseResult = number;
