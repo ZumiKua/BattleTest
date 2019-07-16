@@ -67,6 +67,9 @@ export class Side{
         this.thisActionDamageMultiplier = 1.0;
         this.damageMultiplierDelta = 0.2;
         this.battlers.forEach(b => b.onTurnStart());
+        if(this.sp <= 3) {
+            this.sp = 3;
+        }
     }
 
     getDisplayDamageMultiplier(): number{
