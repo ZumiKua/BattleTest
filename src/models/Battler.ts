@@ -38,7 +38,7 @@ export class Battler{
     applyAttributeDamage(attribute: Attribute, attributeDamage: number): AttributeDamageResult{
         let result: AttributeDamageResult = {dpDamage: 0, attributePointAttached: 0, knockedIntoWeak: false, attribute: null};
         
-        if(this.weakState && !this.thisTurnDpDamaged) {
+        if(this.weakState && !this.thisTurnDpDamaged && attribute === this.currentAttribute.attribute) {
             result.dpDamage = 1;
             this.dp -= 1;
             this.thisTurnDpDamaged = true;

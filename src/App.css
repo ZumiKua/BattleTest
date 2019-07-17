@@ -137,11 +137,17 @@
   position: relative;
 }
 
-.battle-field-view td>p:first-of-type{
+.battle-field-view td>p.battle-brief-view-name{
   text-align: center;
 }
 
-.battle-field-view td>p:last-of-type{
+.battle-field-view td>p.battle-brief-view-dp {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.battle-field-view td>p.battle-brief-view-icons{
   position: absolute;
   bottom: 0;
   right: 0;

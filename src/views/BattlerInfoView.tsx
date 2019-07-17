@@ -3,21 +3,7 @@ import { Attribute } from "../models/Attribute";
 import { BattlerData, Position } from "../models/Battler";
 import { Field } from "./Field";
 import { PositionSelectionView } from "./PositionSelectionView";
-
-const ATTRIBUTE_NAME = {
-    [Attribute.Earth]: "土",
-    [Attribute.Electric]: "电",
-    [Attribute.Fire]: "火",
-    [Attribute.Water]: "水",
-    [Attribute.Wind]: "风"
-}
-const ICON_NAME = {
-    [Attribute.Earth]: "fa-mountain",
-    [Attribute.Electric]: "fa-bolt",
-    [Attribute.Fire]: "fa-fire",
-    [Attribute.Water]: "fa-tint",
-    [Attribute.Wind]: "fa-wind"
-}
+import {ATTRIBUTE_NAME, ICON_NAME} from "./AttributeName";
 
 interface Props{
     isLeft: boolean;
