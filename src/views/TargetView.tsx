@@ -58,10 +58,11 @@ export class TargetView extends React.Component<Props, {hoveredPosition: {isLeft
         this.props.battlersLeft.forEach(b => leftBattlersMap[b.position] = b);
         this.props.battlersRight.forEach(b => rightBattlersMap[b.position] = b);
         return <div className="modal target-view is-active">
+                <div className="modal-background"></div>
                 <div className="modal-card">
                     <header className="modal-card-head">
                         <p className="modal-card-title">选择目标</p>
-                        <button className="delete" aria-label="close"></button>
+                        <button className="delete" aria-label="close" onClick={()=>this.props.onClose()}></button>
                     </header>
                     <section className="modal-card-body">
                         <table className="target-view-table">

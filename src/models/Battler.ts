@@ -102,8 +102,10 @@ export class Battler{
     }
 
     onTurnStart() : void{
+        if(this.thisTurnDpDamaged) {
+            this.weakState = false;
+        }
         this.thisTurnDpDamaged = false;
-        this.weakState = false;
         this.defence = 0;
     }
 
