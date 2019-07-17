@@ -15,7 +15,7 @@ export function SideView(props: Props) {
     return <div className={"side-view column is-6" + (props.isRed ? " red" : " blue") }>
         <div>
             <p><b>HP:</b> {props.side.hp}</p>
-            <p><b>SP:</b> {props.side.sp}</p>
+            <p><b>AP:</b> {props.side.sp}</p>
             <BattleFieldView isLeft={props.isRed} battlers={props.side.battlers} onBattlerClick={props.onBattlerClick}/>
         </div>
     </div>

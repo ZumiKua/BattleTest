@@ -87,7 +87,7 @@ export class ActionInfoView extends React.Component<Props> {
         return <div className="action-view">
             <Field label="名称"  type="text" value={this.props.action.name} onChange={this.onNameChanged} />
             <Field label="HP伤害" type="number" value={this.props.action.hpDamage} onChange={this.onHpDamageChanged} />
-            <Field label="SP消耗" type="number" value={this.props.action.spCost} onChange={this.onSpCostChanged} />
+            <Field label="AP消耗" type="number" value={this.props.action.spCost} onChange={this.onSpCostChanged} />
             <Field label="属性伤害" type="number" value={this.props.action.attributeDamage} onChange={this.onAttributeDamageChanged} />
             <Field label="DP回复" type="number" value={this.props.action.dpRecovery} onChange={this.onDpRecoveryChanged} />
             <Field label="AP回复" type="number" value={this.props.action.spRecovery} onChange={this.onSpRecoveryChanged} />
