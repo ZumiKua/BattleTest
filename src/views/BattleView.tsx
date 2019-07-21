@@ -6,7 +6,7 @@ import { Action, Attack } from "../models/Action";
 import { Subscription } from "rxjs";
 import { SideView } from "./SideView";
 import { TargetView } from "./TargetView";
-import { Battler, FlatPosToXY, Position } from "../models/Battler";
+import { Battler, Position } from "../models/Battler";
 import { ResultView } from "./ResultView";
 import { ActionSelectionView } from "./ActionSelectionView";
 import { ActionRecordsView } from "./ActionRecordsView";
@@ -101,8 +101,8 @@ export class BattleView extends React.Component<Props, State>{
         this.battleVM!.addAction(action);
     }
 
-    onTargetSelected(target: Position, isLeft: boolean) {
-        this.battleVM!.setTarget(FlatPosToXY(target), isLeft);
+    onTargetSelected(targets: {left: Position[], right: Position[]}) {
+        this.battleVM!.setTargets(targets);
     }
 
     onBattlerSelected(battler: Battler) {
@@ -138,7 +138,7 @@ export class BattleView extends React.Component<Props, State>{
         }
         let target = null;
         if(this.state.inputtingPhase === "decideTarget") {
-            target = <TargetView battlersLeft={this.battleVM.sideA.battlers} battlersRight={this.battleVM.sideB.battlers} onTargetSelected={this.onTargetSelected} areas={this.battleVM.inputtingAction!.targetArea} onClose={this.onTargetSelectionClosed}/>
+            target = <TargetView battlersLeft={this.battleVM.sideA.battlers} battlersRight={this.battleVM.sideB.battlers} onTargetSelected={this.onTargetSelected} onClose={this.onTargetSelectionClosed}/>
         }
         return <div className="container battle-view">
             <div className="columns">

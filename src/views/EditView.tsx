@@ -7,7 +7,8 @@ import { Attribute } from "../models/Attribute";
 import { LoadView } from "./LoadView";
 import { Link } from "react-router-dom";
 
-const META_ITEM = "_saveMetaItem_V2";
+const META_ITEM = "_saveMetaItem_V3";
+const META_ITEM_V2 = "_saveMetaItem_V2";
 
 interface SaveData{
     side: SideData;
@@ -52,6 +53,7 @@ export class EditView extends React.Component<Props, State>{
         this.handleSide2Changed = this.handleSide2Changed.bind(this);
         this.onAddAction = this.onAddAction.bind(this);
         this.onComplete = this.onComplete.bind(this);
+        this.migrateSaveV2_TO_V3();
     }
 
     handleSideChanged(side: SideData) {
@@ -74,7 +76,7 @@ export class EditView extends React.Component<Props, State>{
     onAddAction() {
         this.setState((state) => {
             let arr = [...state.actions];
-            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, targetArea: [], name: "", spRecovery: 0, dpRecovery: 0, defenceIncrease: 0}});
+            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, name: "", spRecovery: 0, dpRecovery: 0, defenceIncrease: 0}});
             return {actions: arr};
         })
     }
@@ -103,7 +105,7 @@ export class EditView extends React.Component<Props, State>{
         if(savename === "") {
             return;
         }
-        if(savename === META_ITEM) {
+        if(savename === META_ITEM || savename === META_ITEM_V2) {
             window.alert("非法名称");
             return;
         }
@@ -125,6 +127,37 @@ export class EditView extends React.Component<Props, State>{
         }
         localStorage.setItem(META_ITEM, JSON.stringify(names));
         localStorage.setItem(savename, stateString);
+    }
+
+    private migrateSaveV2_TO_V3() {
+        const V2nameString = localStorage.getItem(META_ITEM_V2);
+        if(V2nameString === null) {
+            return;
+        }
+        const V2saves = JSON.parse(V2nameString) as string[];
+        const newSave = [];
+        for (let save of V2saves) {
+            const saveString = localStorage.getItem(save);
+            if(saveString === null) {
+                continue;
+            }
+            let saveData = JSON.parse(saveString) as any;
+            delete saveData["targetArea"];
+            newSave.push(save);
+            localStorage.setItem(save, JSON.stringify(saveData));
+        }
+        localStorage.removeItem(META_ITEM_V2);
+        const V3NameString = localStorage.getItem(META_ITEM);
+        let v3names: string[] = [];
+        if(V3NameString !== null) {
+            v3names = JSON.parse(V3NameString) as string[];
+        }
+        for (let save of newSave) {
+            if(v3names.indexOf(save) === -1) {
+                v3names.push(save);
+            }
+        }
+        localStorage.setItem(META_ITEM, JSON.stringify(v3names));
     }
 
     onLoad() {

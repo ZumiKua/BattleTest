@@ -1,4 +1,4 @@
-import { HpDamageResult, Battler, AttributeDamageResult, DpRecoveryResult, DefenceIncreaseResult } from "./Battler";
+import { HpDamageResult, Battler, Position, AttributeDamageResult, DpRecoveryResult, DefenceIncreaseResult, FlatPosToXY } from "./Battler";
 import { DamageMultiplierResult, Side, SpRecoveryResult  } from "./Side";
 import { ActionData } from "./ActionData";
 
@@ -8,16 +8,14 @@ export class Action{
     data: ActionData;
     id: number;
     private attack: Attack | null;
-    private targetPoint: [number, number];
-    targetSide: Side;
+    private targetPoints: {self: Position[], opponent: Position[]};
 
-    constructor(ad: ActionData, user: Battler, target: [number, number], targetSide: Side, id: number) {
+    constructor(ad: ActionData, user: Battler, targets: {self: Position[], opponent: Position[]}, id: number) {
         this.data = ad;
         this.targets = null;
         this.attack = null;
         this.user = user;
-        this.targetPoint = target;
-        this.targetSide = targetSide;
+        this.targetPoints = targets;
         this.id = id;
     }
 
@@ -25,21 +23,16 @@ export class Action{
         return !this.user.isDead();
     }
 
+    private fetchBattlers(side: Side, positions: Position[]) : Battler[]{
+        return positions.map(p => side.getBattler(FlatPosToXY(p))).filter(b => b !== undefined) as Battler[];
+    }
+
     step() : boolean{
         if(!this.canUse()){
             return false;
         }
         if(this.targets === null) {
-            let side = this.targetSide;
-            this.targets = this.data.targetArea.map(point => {
-                let x = (this.targetPoint[0] + point[0]);
-                let y = (this.targetPoint[1] + point[1]);
-                //todo extract position calculator.
-                if(x > 2 || x < 0 || y > 1 || y < 0) {
-                    return undefined;
-                }
-                return side!.getBattler([x,y]);
-            }).filter(v => v !== undefined) as Battler[];
+            this.targets = [...this.fetchBattlers(this.user.side, this.targetPoints.self), ...this.fetchBattlers(this.user.side.opponent!, this.targetPoints.opponent)];
         }
         if(this.targets.length === 0) {
             this.user.side.onActionEnd();

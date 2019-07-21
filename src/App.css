@@ -196,6 +196,10 @@
   text-align: center;
 }
 
+.target-view-table td:hover {
+  background: #CCCCCC;
+}
+
 .target-view-table td.highlighted {
   background: #CCCCCC;
 }

@@ -1,7 +1,7 @@
 import { Side, SideData } from "../models/Side";
 import { Action, Attack } from "../models/Action";
 import { ActionData } from "../models/ActionData";
-import { Battler } from "../models/Battler";
+import { Battler, Position } from "../models/Battler";
 import { Observable, BehaviorSubject } from "rxjs" 
 
 export type InputtingPhase = "decideBattler" | "decideAction" | "decideTarget" | undefined;
@@ -85,11 +85,19 @@ export class BattleVM {
         return true;
     }
 
-    setTarget(target: [number, number], isLeft: boolean) {
+    setTargets(targets: {left: Position[], right: Position[]}) {
         if(this._inputtingAction!.spCost <= this._currentInputtingBattler!.side.sp) {
             this._currentInputtingBattler!.side.sp -= this._inputtingAction!.spCost;
-            const side = isLeft ? this.sideA : this.sideB;
-            this._actions.value.push(new Action(this._inputtingAction!, this._currentInputtingBattler!, target, side, this._nextActionId));
+            
+            
+            let actionTargets;
+            if(this._currentInputtingBattler!.side === this.sideA) {
+                actionTargets = {self: targets.left, opponent: targets.right};
+            }
+            else {
+                actionTargets = {self: targets.right, opponent: targets.left};
+            }
+            this._actions.value.push(new Action(this._inputtingAction!, this._currentInputtingBattler!, actionTargets, this._nextActionId));
             ++this._nextActionId;
         }
         this._inputtingPhase.next("decideBattler");

@@ -1,5 +1,4 @@
 import { Side } from "../models/Side";
-import { BattlerView } from "./BattlerView";
 import React from "react";
 import { Battler } from "../models/Battler";
 import { BattleFieldView } from "./BattleFieldView";

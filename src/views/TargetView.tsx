@@ -1,58 +1,47 @@
-import { Battler, Position, FlatPosToXY, XYPosToFlat } from "../models/Battler";
+import { Battler, Position, XYPosToFlat } from "../models/Battler";
 import React from "react";
 
 interface Props{
     battlersLeft: Battler[];
     battlersRight: Battler[];
-    areas: [number, number][];
-    onTargetSelected: (pos: Position, isLeft: boolean) => void;
+    onTargetSelected: (selected: {left: Position[], right: Position[]}) => void;
     onClose: () => void;
 }
 
-function BattlerCell(props: {onClick: () => void, onEnter: () => void, onExit: () => void, pos: Position, highlighted: boolean, name: string}) {
-    return <td onMouseEnter={() => props.onEnter()} onMouseLeave={() => props.onExit()} className={props.highlighted ? "highlighted" : ""} onClick={() => props.onClick()}>{props.name}</td>
+function BattlerCell(props: {onClick: () => void, pos: Position, highlighted: boolean, name: string}) {
+    return <td className={props.highlighted ? "highlighted" : ""} onClick={() => props.onClick()}>{props.name}</td>
 }
 
-export class TargetView extends React.Component<Props, {hoveredPosition: {isLeft: boolean, pos: Position} | undefined}> {
+export class TargetView extends React.Component<Props, {selectedPosition: {left: {[p in Position] : boolean}, right: {[p in Position]: boolean}}}> {
     constructor(props: Props) {
         super(props);
-        this.state = {hoveredPosition: undefined};
+        this.state = {selectedPosition: {left: {0: false, 1: false, 2: false, 3: false, 4: false, 5: false}, right: {0: false, 1: false, 2: false, 3: false, 4: false, 5: false}}};
         this.onTargetSelected = this.onTargetSelected.bind(this);
     }
 
     onTargetSelected(pos: Position, isLeft: boolean) {
-        this.props.onTargetSelected(pos, isLeft);
-    }
-
-    onEnter(isLeft: boolean, pos: Position) {
-        this.setState({hoveredPosition: {isLeft, pos}});
-    }
-
-    onExit(isLeft: boolean, pos: Position) {
-        this.setState((prevState) => {
-            if(prevState.hoveredPosition !== undefined && prevState.hoveredPosition.isLeft === isLeft && prevState.hoveredPosition.pos === pos) {
-                return {hoveredPosition: undefined};
-            }
-            else{
-                return {hoveredPosition: prevState.hoveredPosition};
+        this.setState(prevState => {
+            {
+                const oldPos = {left: {...prevState.selectedPosition.left}, right: {...prevState.selectedPosition.right}};
+                if(isLeft) {
+                    oldPos.left[pos] = !oldPos.left[pos];
+                }
+                else{
+                    oldPos.right[pos] = !oldPos.right[pos];
+                }
+                return {selectedPosition: oldPos}
             }
         });
     }
 
+    onConfirm() {
+        const convert = (v: {[p in Position]: boolean}) => Object.entries(v).filter(([x,y]) => y).map(([key, _]) => Number.parseInt(key));
+        const left = convert(this.state.selectedPosition.left) as Position[];
+        const right = convert(this.state.selectedPosition.right) as Position[];
+        this.props.onTargetSelected({left, right});
+    }
+
     render() {
-        let highlighted : Position[] = [];
-        if(this.state.hoveredPosition !== undefined) {
-            let [bx,by] = FlatPosToXY(this.state.hoveredPosition.pos);
-            this.props.areas.forEach((pos) => {
-                let x = bx + pos[0];
-                let y = by + pos[1];
-                if(x >= 0 && x <= 2 && y >= 0 && y <= 1) {
-                    highlighted.push(x * 2 + y as Position);
-                }
-            })
-        }
-        let map = Array(6).fill(false);
-        highlighted.forEach(v => map[v] = true);
         let leftBattlersMap: (Battler|null)[] = Array(6).fill(null);
         let rightBattlersMap: (Battler|null)[] = Array(6).fill(null);
         this.props.battlersLeft.forEach(b => leftBattlersMap[b.position] = b);
@@ -75,9 +64,8 @@ export class TargetView extends React.Component<Props, {hoveredPosition: {isLeft
                                                     let pos = XYPosToFlat(x as 0|1|2, y as 0|1);
                                                     let battler = leftBattlersMap[pos];
                                                     let name = battler === null ? "" : battler.name;
-                                                    let isHighlightedLeft = this.state.hoveredPosition === undefined ? false : this.state.hoveredPosition.isLeft;
-                                                    let isHighlighted = isHighlightedLeft ? map[pos] : false;
-                                                    return <BattlerCell key={y} onClick={()=>this.onTargetSelected(pos, true)} onEnter={() => this.onEnter(true, pos)} onExit={() => this.onExit(true, pos)} pos={pos} name={name} highlighted={isHighlighted}/>
+                                                    let isHighlighted = this.state.selectedPosition.left[pos];
+                                                    return <BattlerCell key={y} onClick={()=>this.onTargetSelected(pos, true)} pos={pos} name={name} highlighted={isHighlighted}/>
                                                 })
                                             }
                                             {
@@ -88,9 +76,8 @@ export class TargetView extends React.Component<Props, {hoveredPosition: {isLeft
                                                     let pos = XYPosToFlat(x as 0|1|2, y as 0|1);
                                                     let battler = rightBattlersMap[pos];
                                                     let name = battler === null ? "" : battler.name;
-                                                    let isHighlightedRight = this.state.hoveredPosition === undefined ? false : !this.state.hoveredPosition.isLeft;
-                                                    let isHighlighted = isHighlightedRight ? map[pos] : false;
-                                                    return <BattlerCell key={y} onClick={()=>this.onTargetSelected(pos, false)} onEnter={() => this.onEnter(false, pos)} onExit={() => this.onExit(false, pos)} pos={pos} name={name} highlighted={isHighlighted}/>
+                                                    let isHighlighted = this.state.selectedPosition.right[pos];
+                                                    return <BattlerCell key={y} onClick={()=>this.onTargetSelected(pos, false)} pos={pos} name={name} highlighted={isHighlighted}/>
                                                 })
                                             }
                                         </tr>
@@ -99,6 +86,10 @@ export class TargetView extends React.Component<Props, {hoveredPosition: {isLeft
                             </tbody>
                         </table>
                     </section>
+                    <footer className="modal-card-foot">
+                        <button className="button is-success" onClick={() => this.onConfirm()}>确认</button>
+                        <button className="button" onClick={() => this.props.onClose()}>取消</button>
+                    </footer>
                 </div>
             </div>
     }

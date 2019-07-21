@@ -23,22 +23,6 @@ export class ActionInfoView extends React.Component<Props> {
         this.onDefenceIncreaseChanged = this.onDefenceIncreaseChanged.bind(this);
     }
 
-    handleAreaClicked(x: number, y: number) {
-        let action = {...this.props.action, targetArea: [...this.props.action.targetArea]};
-        let existed = action.targetArea.findIndex(v => v[0] === x && v[1] === y);
-        if(existed >= 0) {
-            action.targetArea.splice(existed, 1);
-        }
-        else{
-            action.targetArea.push([x, y]);
-        }
-        this.props.onActionChanged(action);
-    }
-
-    isAreaChecked(x: number, y: number) {
-        return this.props.action.targetArea.find(v => v[0] === x && v[1] === y) !== undefined;
-    }
-
     onAttributeChanged(e: ChangeEvent<HTMLSelectElement>) {
         let action = {...this.props.action, attribute: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
@@ -78,11 +62,7 @@ export class ActionInfoView extends React.Component<Props> {
         let action = {...this.props.action, defenceIncrease: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
-
-    getCellClassName(x: number, y: number) {
-        return "action-info-target-cell" + (this.isAreaChecked(x,y) ? " checked" : "") + (x === 0 && y === 0 ? " center" : "");
-    }
-
+    
     render() {
         return <div className="action-view">
             <Field label="名称"  type="text" value={this.props.action.name} onChange={this.onNameChanged} />
@@ -110,24 +90,6 @@ export class ActionInfoView extends React.Component<Props> {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div className="field is-horizontal">
-                <div className="field-label is-normal">
-                    <label className="label">目标范围</label>
-                </div>
-                <div className="field-body">
-                    <table className="action-info-target-table">
-                        <tbody>
-                        {
-                            [-2,-1,0,1,2].map(x => {
-                                return <tr key={x}>
-                                    {[-2,-1,0,1,2].map(y => <td className={this.getCellClassName(x,y)} key={y} onClick={(v) => this.handleAreaClicked(x, y, )}></td>)}
-                                </tr>
-                            })
-                        }
-                        </tbody>
-                    </table>
                 </div>
             </div>
             <div className="is-grouped-right is-grouped field">
