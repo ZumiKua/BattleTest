@@ -1,13 +1,14 @@
 import React from "react";
 import { SideInfoView } from "./SideInfoView";
-import { SideData } from "../models/Side";
+import { SideData, Side } from "../models/Side";
 import { ActionData } from "../models/ActionData";
 import { ActionInfoView } from "./ActionInfoView";
 import { Attribute } from "../models/Attribute";
 import { LoadView } from "./LoadView";
 import { Link } from "react-router-dom";
 
-const META_ITEM = "_saveMetaItem_V3";
+const META_ITEM = "_saveMetaItem_V4";
+const META_ITEM_V3 = "_saveMetaItem_V3";
 const META_ITEM_V2 = "_saveMetaItem_V2";
 
 interface SaveData{
@@ -41,8 +42,8 @@ export class EditView extends React.Component<Props, State>{
     constructor(props: Props) {
         super(props);
         this.state = {
-            side: {hp: 0, sp: 0, battlers: []},
-            side2: {hp:0, sp:0, battlers: []},
+            side: {hp: 0, sp: 0, battlers: [], battlerPositions: {}},
+            side2: {hp:0, sp:0, battlers: [], battlerPositions: {}},
             actions: [],
             loadShowing: false,
             saves: [],
@@ -54,6 +55,7 @@ export class EditView extends React.Component<Props, State>{
         this.onAddAction = this.onAddAction.bind(this);
         this.onComplete = this.onComplete.bind(this);
         this.migrateSaveV2_TO_V3();
+        this.migrateSaveV3_TO_V4();
     }
 
     handleSideChanged(side: SideData) {
@@ -129,35 +131,60 @@ export class EditView extends React.Component<Props, State>{
         localStorage.setItem(savename, stateString);
     }
 
-    private migrateSaveV2_TO_V3() {
-        const V2nameString = localStorage.getItem(META_ITEM_V2);
-        if(V2nameString === null) {
+    private migrateSave(oldSaveItem: string, newSaveItem: string, convert: (data:any) => any) {
+        const oldNameString = localStorage.getItem(oldSaveItem);
+        if(oldNameString === null) {
             return;
         }
-        const V2saves = JSON.parse(V2nameString) as string[];
+        const oldSaves = JSON.parse(oldNameString) as string[];
         const newSave = [];
-        for (let save of V2saves) {
+        for (let save of oldSaves) {
             const saveString = localStorage.getItem(save);
             if(saveString === null) {
                 continue;
             }
             let saveData = JSON.parse(saveString) as any;
-            delete saveData["targetArea"];
+            saveData = convert(saveData);
             newSave.push(save);
             localStorage.setItem(save, JSON.stringify(saveData));
         }
-        localStorage.removeItem(META_ITEM_V2);
-        const V3NameString = localStorage.getItem(META_ITEM);
-        let v3names: string[] = [];
-        if(V3NameString !== null) {
-            v3names = JSON.parse(V3NameString) as string[];
+        localStorage.removeItem(oldSaveItem);
+        const newNameString = localStorage.getItem(newSaveItem);
+        let newNames: string[] = [];
+        if(newNameString !== null) {
+            newNames = JSON.parse(newNameString) as string[];
         }
         for (let save of newSave) {
-            if(v3names.indexOf(save) === -1) {
-                v3names.push(save);
+            if(newNames.indexOf(save) === -1) {
+                newNames.push(save);
             }
         }
-        localStorage.setItem(META_ITEM, JSON.stringify(v3names));
+        localStorage.setItem(META_ITEM, JSON.stringify(newNames));
+    }
+
+    private migrateSaveV3_TO_V4() {
+        const convertSide = (side: any) => {
+            let v: any = {};
+            for(let b of side.battlers){
+                v[b["position"]] = b.id;
+                delete b["position"];
+            }
+            side.battlerPositions = v;
+        }
+        this.migrateSave(META_ITEM_V3, META_ITEM, (oldSave)=> {
+            convertSide(oldSave["side"]);
+            convertSide(oldSave["side2"]);
+            return oldSave;
+        });
+    }
+
+    private migrateSaveV2_TO_V3() {
+        this.migrateSave(META_ITEM_V2, META_ITEM_V3, (oldSave) => {
+            oldSave.actions.forEach((action: any) => {
+                delete action["targetArea"];
+            })
+            return oldSave;
+        })
     }
 
     onLoad() {

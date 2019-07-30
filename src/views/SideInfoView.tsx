@@ -1,9 +1,10 @@
 import React, { ReactNode, ChangeEvent } from "react";
-import { BattlerData } from "../models/Battler";
+import { BattlerData, Position } from "../models/Battler";
 import { BattlerInfoView } from "./BattlerInfoView";
 import { SideData } from "../models/Side";
 import { Attribute } from "../models/Attribute";
 import { Field } from "./Field";
+import { BattlerPositionView } from "./BattlerPositionView";
 
 interface Props{
     isLeft: boolean;
@@ -13,7 +14,6 @@ interface Props{
 
 export class SideInfoView extends React.Component<Props, {}>{
 
-    side: SideData;
     maxBattlerId: number;
 
     constructor(props : Props) {
@@ -21,50 +21,47 @@ export class SideInfoView extends React.Component<Props, {}>{
         this.handleHpChange = this.handleHpChange.bind(this);
         this.handleSpChange = this.handleSpChange.bind(this);
         this.addBattler = this.addBattler.bind(this);
-        this.side = {hp: 0, sp: 0, battlers: []};
         this.maxBattlerId = 0;
     }
 
     handleHpChange(e: ChangeEvent<HTMLInputElement>) {
-        let side = this.copySide(this.props.side);
-        side.hp = Number.parseInt(e.target.value);
-        this.props.onSideChanged(side);
+        this.props.onSideChanged({...this.props.side, hp: Number.parseInt(e.target.value)});
     }
 
     handleSpChange(e: ChangeEvent<HTMLInputElement>) {
-        let side = this.copySide(this.props.side);
-        side.sp = Number.parseInt(e.target.value);
-        this.props.onSideChanged(side);
+        this.props.onSideChanged({...this.props.side, sp: Number.parseInt(e.target.value)});
     }
 
     handleBattlerChanged(id: number, battler: BattlerData) {
-        let side = this.copySide(this.props.side);
-        let battlers = side.battlers;
-        battlers[id] = battler;
-        this.props.onSideChanged(side);
+        let battlers = [...this.props.side.battlers];
+        const index = battlers.findIndex(b => b.id === id);
+        battlers[index] = battler;
+        this.props.onSideChanged({...this.props.side, battlers});
     }
 
     addBattler() {
-        let side = this.copySide(this.props.side);
-        let battlers = side.battlers;
+        let battlers = [...this.props.side.battlers];
         let res = {[Attribute.Earth]: 0, [Attribute.Electric]: 0, [Attribute.Fire]: 0, [Attribute.Water]: 0, [Attribute.Wind]: 0};
-        let b: BattlerData = {dp: 0, name: "", attributeResistances: res, id: this.maxBattlerId++, position: 0};
+        let b: BattlerData = {dp: 0, name: "", attributeResistances: res, id: this.maxBattlerId++};
         battlers.push(b);
-        this.props.onSideChanged(side);
+        this.props.onSideChanged({...this.props.side, battlers});
     }
 
     deleteBattler(id: number) {
         let battlers = this.props.side.battlers.filter(b => b.id !== id);
-        this.props.onSideChanged({...this.props.side, battlers});
-        
-
+        const positions: any = this.props.side.battlerPositions;
+        for(let key in positions) {
+            if(positions[key] === id) {
+                positions[key] = undefined;
+            }
+        }
+        this.props.onSideChanged({...this.props.side, battlers, battlerPositions: positions});
     }
 
-    copySide(side: SideData) : SideData {
-        this.side.hp = side.hp;
-        this.side.sp = side.sp;
-        this.side.battlers = side.battlers;
-        return this.side;
+    onBattlerPositionChanged(pos: Position, id: number | undefined): void {
+        const battlerPositions = {...this.props.side.battlerPositions, [pos]: id};
+        console.log(battlerPositions);
+        this.props.onSideChanged({...this.props.side, battlerPositions});
     }
 
     render(): ReactNode{
@@ -75,15 +72,15 @@ export class SideInfoView extends React.Component<Props, {}>{
                 <div className="battlers-view">
                     <label className="label">角色：</label>
                     {
-                        this.props.side.battlers.map((b, id) => {
-                            return <BattlerInfoView isLeft={this.props.isLeft} battler={b} onBattlerChanged={this.handleBattlerChanged.bind(this, id) } onBattlerDeleted={() => this.deleteBattler(b.id)} key={b.id}/>
+                        this.props.side.battlers.map((b) => {
+                            return <BattlerInfoView isLeft={this.props.isLeft} battler={b} onBattlerChanged={this.handleBattlerChanged.bind(this, b.id) } onBattlerDeleted={() => this.deleteBattler(b.id)} key={b.id}/>
                         })
                     }
                     <button className="button" onClick={this.addBattler}>添加角色</button>
                 </div>
+                <BattlerPositionView battlers={this.props.side.battlers} battlerPositions={this.props.side.battlerPositions} isLeft={this.props.isLeft} onBattlerPositionChanged={(p,i) => this.onBattlerPositionChanged(p,i)} />
             </div>
-            
-
         </div>
     }
+    
 }

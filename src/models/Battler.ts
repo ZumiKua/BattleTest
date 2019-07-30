@@ -13,8 +13,8 @@ export class Battler{
     id: number;
     defence: number;
 
-    constructor(side: Side, data: BattlerData) {
-        this.position = data.position;
+    constructor(side: Side, data: BattlerData, position: Position, id: number) {
+        this.position = position;
         this.side = side;
         this.dp = data.dp;
         this.maxDp = data.dp;
@@ -23,7 +23,7 @@ export class Battler{
         this.weakState = false;
         this.thisTurnDpDamaged = false;
         this.name = data.name;
-        this.id = data.id;
+        this.id = id;
         this.defence = 0;
     }
 
@@ -128,8 +128,8 @@ export interface BattlerData{
     dp: number;
     id: number;
     attributeResistances: {[key in Attribute]: number};
-    position: 0|1|2|3|4|5;
 }
+
 export type Position = 0|1|2|3|4|5;
 export function FlatPosToXY(pos: Position) : [0|1|2, 0|1]{
     return [Math.floor(pos / 2), pos % 2] as [0|1|2, 0|1];

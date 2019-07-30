@@ -2,7 +2,6 @@ import React, { ChangeEvent } from "react";
 import { Attribute } from "../models/Attribute";
 import { BattlerData, Position } from "../models/Battler";
 import { Field } from "./Field";
-import { PositionSelectionView } from "./PositionSelectionView";
 import {ATTRIBUTE_NAME, ICON_NAME} from "./AttributeName";
 
 interface Props{
@@ -16,49 +15,25 @@ export class BattlerInfoView extends React.Component<Props, {}>{
     constructor(props: Props) {
         super(props);
         this.handleDpChange = this.handleDpChange.bind(this);
-        this.handlePositionChange = this.handlePositionChange.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
-        
     }
 
     handleDpChange(e: ChangeEvent<HTMLInputElement>) {
-        let battler = this.copyBattler(this.props.battler);
-        battler.dp = Number.parseInt(e.target.value);
-        this.props.onBattlerChanged(battler);
-    }
-
-    handlePositionChange(pos: Position) {
-        let battler = {...this.props.battler, position: pos};
-        this.props.onBattlerChanged(battler);
+        this.props.onBattlerChanged({...this.props.battler, dp: Number.parseInt(e.target.value)});
     }
 
     handleNameChange(e: ChangeEvent<HTMLInputElement>) {
-        let battler = this.copyBattler(this.props.battler);
-        battler.name = e.target.value;
-        this.props.onBattlerChanged(battler);
+        this.props.onBattlerChanged({...this.props.battler, name: e.target.value});
     }
 
     handleAttributeChange(attribute: Attribute, e: ChangeEvent<HTMLInputElement>) {
-        let battler = this.copyBattler(this.props.battler);
-        battler.attributeResistances[attribute] = Number.parseInt(e.target.value);
-        this.props.onBattlerChanged(battler);
-    }
-
-    copyBattler(battler: BattlerData) : BattlerData{
-        return {dp: battler.dp, id: battler.id, name: battler.name, position: battler.position, attributeResistances: battler.attributeResistances};
+        const attributeResistances = {...this.props.battler.attributeResistances, [attribute]: Number.parseInt(e.target.value)};
+        this.props.onBattlerChanged({...this.props.battler, attributeResistances});
     }
 
     render() {
         return <div className="battler-info-view">
             <Field label="DP:" type="number" onChange={this.handleDpChange} value={this.props.battler.dp} />
-            <div className="field is-horizontal">
-                <div className="field-label is-normal">
-                    <label className="label">位置</label>
-                </div>
-                <div className="field-body">
-                    <PositionSelectionView isLeft={this.props.isLeft} currentPosition={this.props.battler.position} onPositionChange={pos => this.handlePositionChange(pos)}/>
-                </div>
-            </div>
             <Field label="名称:" type="text" onChange={this.handleNameChange} value={this.props.battler.name} />
         
             <div className="field is-horizontal">

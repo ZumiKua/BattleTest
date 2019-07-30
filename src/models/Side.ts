@@ -1,4 +1,4 @@
-import { Battler, BattlerData } from "./Battler";
+import { Battler, BattlerData, Position } from "./Battler";
 import { Action } from "./Action";
 
 export class Side{
@@ -12,7 +12,12 @@ export class Side{
     sp: number;
     
     constructor(data: SideData) {
-        this.battlers = data.battlers.map(v => new Battler(this, v));
+        //this.battlers = data.battlers.map(v => new Battler(this, v));
+        this.battlers = Object.entries(data.battlerPositions).map(([pos, id], index) => 
+            new Battler(this, data.battlers.find(b => b.id === id)!, parseInt(pos) as Position, index)
+        );
+        console.log(data.battlerPositions, data.battlers);
+        console.log(this.battlers);
         this.damageMultiplier = 1.0;
         this.thisActionDamageMultiplier = 1.0;
         this.damageMultiplierDelta = 0.2;
@@ -87,6 +92,7 @@ export interface HpDamageResult{
 export type SpRecoveryResult = number;
 
 export interface SideData{
+    battlerPositions: {[p in Position]? : number|undefined};
     battlers: BattlerData[];
     hp: number;
     sp: number;

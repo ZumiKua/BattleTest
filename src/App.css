@@ -232,3 +232,23 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.battler-position-view td {
+  width: 7rem;
+  height: 7rem;
+  position: relative;
+  background: #EEEEEE;
+  border: 1px #DDDDDD solid;
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+.battler-position-view td div {
+  text-align: center;
+  
+}
+
+.battler-position-view td.frontline{
+  writing-mode: vertical-lr;
+}
