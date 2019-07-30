@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "671c633ad976e84c2e851b204eee3f42",
+    "revision": "481047d16979785d62663a7f374d2c78",
     "url": "/BattleTest/index.html"
   },
   {
-    "revision": "2e90a7ab16a559b07c1c",
-    "url": "/BattleTest/static/css/2.5c45117f.chunk.css"
+    "revision": "c59ab8609826ef02e71c",
+    "url": "/BattleTest/static/css/2.cd900bb3.chunk.css"
   },
   {
-    "revision": "2e378f6ff1f01bdf3b41",
-    "url": "/BattleTest/static/css/main.347b177b.chunk.css"
+    "revision": "04f54285ce72c86fb929",
+    "url": "/BattleTest/static/css/main.1ac65b0b.chunk.css"
   },
   {
-    "revision": "2e90a7ab16a559b07c1c",
-    "url": "/BattleTest/static/js/2.89711d7f.chunk.js"
+    "revision": "c59ab8609826ef02e71c",
+    "url": "/BattleTest/static/js/2.bac67881.chunk.js"
   },
   {
-    "revision": "2e378f6ff1f01bdf3b41",
-    "url": "/BattleTest/static/js/main.9a948e96.chunk.js"
+    "revision": "04f54285ce72c86fb929",
+    "url": "/BattleTest/static/js/main.8b25e4f0.chunk.js"
   },
   {
     "revision": "58ce3e9da0c44de6603c",

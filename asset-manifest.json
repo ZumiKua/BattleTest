@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/BattleTest/static/css/main.347b177b.chunk.css",
-    "main.js": "/BattleTest/static/js/main.9a948e96.chunk.js",
-    "main.js.map": "/BattleTest/static/js/main.9a948e96.chunk.js.map",
+    "main.css": "/BattleTest/static/css/main.1ac65b0b.chunk.css",
+    "main.js": "/BattleTest/static/js/main.8b25e4f0.chunk.js",
+    "main.js.map": "/BattleTest/static/js/main.8b25e4f0.chunk.js.map",
     "runtime~main.js": "/BattleTest/static/js/runtime~main.82ad675c.js",
     "runtime~main.js.map": "/BattleTest/static/js/runtime~main.82ad675c.js.map",
-    "static/css/2.5c45117f.chunk.css": "/BattleTest/static/css/2.5c45117f.chunk.css",
-    "static/js/2.89711d7f.chunk.js": "/BattleTest/static/js/2.89711d7f.chunk.js",
-    "static/js/2.89711d7f.chunk.js.map": "/BattleTest/static/js/2.89711d7f.chunk.js.map",
+    "static/css/2.cd900bb3.chunk.css": "/BattleTest/static/css/2.cd900bb3.chunk.css",
+    "static/js/2.bac67881.chunk.js": "/BattleTest/static/js/2.bac67881.chunk.js",
+    "static/js/2.bac67881.chunk.js.map": "/BattleTest/static/js/2.bac67881.chunk.js.map",
     "index.html": "/BattleTest/index.html",
-    "precache-manifest.b3439171381ca8deda1ff64e75fe5f1d.js": "/BattleTest/precache-manifest.b3439171381ca8deda1ff64e75fe5f1d.js",
+    "precache-manifest.ed0e7974dc8708bf2e719f1b4a8bba60.js": "/BattleTest/precache-manifest.ed0e7974dc8708bf2e719f1b4a8bba60.js",
     "service-worker.js": "/BattleTest/service-worker.js",
-    "static/css/2.5c45117f.chunk.css.map": "/BattleTest/static/css/2.5c45117f.chunk.css.map",
-    "static/css/main.347b177b.chunk.css.map": "/BattleTest/static/css/main.347b177b.chunk.css.map",
+    "static/css/2.cd900bb3.chunk.css.map": "/BattleTest/static/css/2.cd900bb3.chunk.css.map",
+    "static/css/main.1ac65b0b.chunk.css.map": "/BattleTest/static/css/main.1ac65b0b.chunk.css.map",
     "static/media/all.css": "/BattleTest/static/media/fa-solid-900.ef3df984.eot"
   }
 }
