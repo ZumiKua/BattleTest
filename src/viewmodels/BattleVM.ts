@@ -1,7 +1,7 @@
 import { Side, SideData } from "../models/Side";
 import { Action, Attack } from "../models/Action";
 import { ActionData } from "../models/ActionData";
-import { Battler, Position } from "../models/Battler";
+import { Battler, Position, FlatPosToXY } from "../models/Battler";
 import { Observable, BehaviorSubject } from "rxjs" 
 
 export type InputtingPhase = "decideBattler" | "decideAction" | "decideTarget" | undefined;
@@ -14,6 +14,7 @@ export class BattleVM {
     private _sideB: Side;
     private _actions: BehaviorSubject<Action[]>;
     private _phase: BehaviorSubject<Phase>;
+    private _sidesSubject: BehaviorSubject<[Side, Side]>;
     private _inputtingPhase: BehaviorSubject<InputtingPhase>;
     private _actionResults : BehaviorSubject<Attack[]>;
     private currentProcessingAction: Action | undefined;
@@ -26,6 +27,7 @@ export class BattleVM {
         this._sideB = new Side(sideB);
         this._sideA.setOpponent(this._sideB);
         this._sideB.setOpponent(this._sideA);
+        this._sidesSubject = new BehaviorSubject([this._sideA, this._sideB]);
         this._actions = new BehaviorSubject([] as Action[]);
         this._phase = new BehaviorSubject(undefined as Phase);
         this._inputtingPhase = new BehaviorSubject(undefined as InputtingPhase);
@@ -51,6 +53,10 @@ export class BattleVM {
 
     get actions() : Observable<Action[]>{
         return this._actions;
+    }
+    
+    get sides() : Observable<[Side, Side]> {
+        return this._sidesSubject;
     }
 
     get inputtingPhase() : Observable<InputtingPhase> {
@@ -91,7 +97,7 @@ export class BattleVM {
             
             
             let actionTargets;
-            if(this._currentInputtingBattler!.side === this.sideA) {
+            if(this._currentInputtingBattler!.side === this._sideA) {
                 actionTargets = {self: targets.left, opponent: targets.right};
             }
             else {
@@ -152,6 +158,9 @@ export class BattleVM {
                 break;
             }
         }
+
+        //after action processed, side may change.
+        this.dispatchSideChanges();
         
     }
 
@@ -172,6 +181,7 @@ export class BattleVM {
         this._sideB.onTurnStart();
         this._phase.next("inputting");
         this._inputtingPhase.next("decideBattler");
+        this.dispatchSideChanges();
     }
 
     onActionDeleted(id: number): void {
@@ -180,6 +190,29 @@ export class BattleVM {
         const [action] = this._actions.value.splice(index, 1);
         action.user.side.sp += action.data.spCost;
         this._actions.next(this._actions.value);
+    }
+
+    onPositionChange(pos: Position, pos2: Position, isRed: boolean) {
+        let side;
+        if(isRed) {
+            side = this._sideA;
+        }
+        else {
+            side = this._sideB;
+        }
+        const b1 = side.getBattler(FlatPosToXY(pos));
+        const b2 = side.getBattler(FlatPosToXY(pos2));
+        if(b1 !== undefined) {
+            b1.position = pos2;
+        }
+        if(b2 !== undefined) {
+            b2.position = pos;
+        }
+        this.dispatchSideChanges();
+    }
+
+    private dispatchSideChanges() {
+        this._sidesSubject.next([this._sideA, this._sideB]);
     }
     
 }

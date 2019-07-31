@@ -1,5 +1,5 @@
 import React from "react";
-import { SideData } from "../models/Side";
+import { SideData, Side } from "../models/Side";
 import { ActionData } from "../models/ActionData";
 import { Phase, BattleVM, InputtingPhase } from "../viewmodels/BattleVM";
 import { Action, Attack } from "../models/Action";
@@ -22,6 +22,8 @@ interface State {
     inputtingPhase: InputtingPhase;
     actionResults: Attack[];
     actions: Action[];
+    sideA: Side | undefined;
+    sideB: Side | undefined;
 }
 
 export class BattleView extends React.Component<Props, State>{
@@ -36,7 +38,9 @@ export class BattleView extends React.Component<Props, State>{
             phase: undefined,
             inputtingPhase: undefined,
             actionResults: [],
-            actions: []
+            actions: [],
+            sideA: undefined,
+            sideB: undefined
         }
         this.onActionClicked = this.onActionClicked.bind(this);
         this.onTargetSelected = this.onTargetSelected.bind(this);
@@ -44,19 +48,7 @@ export class BattleView extends React.Component<Props, State>{
         this.onTargetSelectionClosed = this.onTargetSelectionClosed.bind(this);
         this.onActionSelectionClosed = this.onActionSelectionClosed.bind(this);
         this.onActionDeleted = this.onActionDeleted.bind(this);
-    }
-
-    createVM() {
-        this.subscription!.unsubscribe();
-        this.subscription = new Subscription();
-        this.battleVM = undefined;
-        if(this.props.sideA !== undefined && this.props.sideB !== undefined) {
-            this.battleVM = new BattleVM(this.props.sideA, this.props.sideB);
-            this.battleVM!.phase.subscribe(p => this.setState({phase: p}));
-            this.battleVM!.inputtingPhase.subscribe(p => this.setState({inputtingPhase: p}));
-            this.battleVM!.actionResults.subscribe(r => this.setState({actionResults: r}));
-            this.battleVM!.actions.subscribe(a => this.setState({actions: a}));
-        }
+        this.onPositionChange = this.onPositionChange.bind(this);
     }
 
     recreateBattleVM() {
@@ -72,6 +64,7 @@ export class BattleView extends React.Component<Props, State>{
             this.battleVM = undefined;
             if(this.props.sideA !== undefined && this.props.sideB !== undefined) {
                 this.battleVM = new BattleVM(this.props.sideA, this.props.sideB);
+                this.registerSubscriptions();
             }
 
         }
@@ -84,11 +77,16 @@ export class BattleView extends React.Component<Props, State>{
             d[1] = this.battleVM!.inputtingPhase.subscribe(p => this.setState({inputtingPhase: p}));
             d[2] = this.battleVM!.actionResults.subscribe(r => this.setState({actionResults: r}));
             d[3] = this.battleVM!.actions.subscribe(a => this.setState({actions: a}));
+            d[4] = this.battleVM!.sides.subscribe(([sideA, sideB]) => {
+                console.log("side changed", sideA);
+                this.setState({sideA, sideB});
+            });
             this.subscription = new Subscription();
             d.forEach(d => this.subscription!.add(d));
         }
     }
 
+    //as per React's documention, it is recommended to listen changes here.
     componentDidMount() {
         this.registerSubscriptions();
     }
@@ -125,6 +123,10 @@ export class BattleView extends React.Component<Props, State>{
         this.battleVM!.onActionDeleted(id);
     }
 
+    onPositionChange(pos: Position, pos2: Position, isRed: boolean) {
+        this.battleVM!.onPositionChange(pos, pos2, isRed);
+    }
+
     render() {
         this.recreateBattleVM();
         if(this.battleVM === undefined) {
@@ -138,12 +140,15 @@ export class BattleView extends React.Component<Props, State>{
         }
         let target = null;
         if(this.state.inputtingPhase === "decideTarget") {
-            target = <TargetView battlersLeft={this.battleVM.sideA.battlers} battlersRight={this.battleVM.sideB.battlers} onTargetSelected={this.onTargetSelected} onClose={this.onTargetSelectionClosed}/>
+            target = <TargetView battlersLeft={this.state.sideA!.battlers} battlersRight={this.state.sideB!.battlers} onTargetSelected={this.onTargetSelected} onClose={this.onTargetSelectionClosed}/>
+        }
+        if(this.state.sideA === undefined || this.state.sideB === undefined) {
+            return <></>;
         }
         return <div className="container battle-view">
             <div className="columns">
-                <SideView isRed={true} side={this.battleVM!.sideA} onBattlerClick={this.onBattlerSelected}/>
-                <SideView isRed={false} side={this.battleVM!.sideB} onBattlerClick={this.onBattlerSelected}/>
+                <SideView isRed={true} side={this.state.sideA!} onBattlerClick={this.onBattlerSelected} onPositionChange={(p1,p2) => this.onPositionChange(p1, p2, true)}/>
+                <SideView isRed={false} side={this.state.sideB!} onBattlerClick={this.onBattlerSelected} onPositionChange={(p1,p2) => this.onPositionChange(p1, p2, false)}/>
             </div>
             <ActionRecordsView actions={this.state.actions} onActionDeleted={this.onActionDeleted} />
             <div className="control">
