@@ -1,5 +1,4 @@
 import { Battler, BattlerData, Position } from "./Battler";
-import { Action } from "./Action";
 
 export class Side{
     
@@ -56,7 +55,7 @@ export class Side{
         return this.sp - oldSp;
     }
 
-    onDamageWeakState(action: Action): DamageMultiplierResult {
+    onDamageWeakState(isEffective: boolean): DamageMultiplierResult {
         let ret = {multiplierAdded: this.damageMultiplierDelta};
         this.thisActionDamageMultiplier += this.damageMultiplierDelta;
         this.damageMultiplierDelta += 0.2;

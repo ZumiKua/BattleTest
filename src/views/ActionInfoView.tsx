@@ -21,6 +21,7 @@ export class ActionInfoView extends React.Component<Props> {
         this.onDpRecoveryChanged = this.onDpRecoveryChanged.bind(this);
         this.onSpRecoveryChanged = this.onSpRecoveryChanged.bind(this);
         this.onDefenceIncreaseChanged = this.onDefenceIncreaseChanged.bind(this);
+        this.onWeakStateRecoverChanged = this.onWeakStateRecoverChanged.bind(this);
     }
 
     onAttributeChanged(e: ChangeEvent<HTMLSelectElement>) {
@@ -62,16 +63,21 @@ export class ActionInfoView extends React.Component<Props> {
         let action = {...this.props.action, defenceIncrease: Number.parseInt(e.target.value)};
         this.props.onActionChanged(action);
     }
+
+    onWeakStateRecoverChanged(e: ChangeEvent<HTMLInputElement>) {
+        let action = {...this.props.action, weakStateRecover: e.target.checked};
+        this.props.onActionChanged(action);
+    }
     
     render() {
         return <div className="action-view">
             <Field label="名称"  type="text" value={this.props.action.name} onChange={this.onNameChanged} />
             <Field label="HP伤害" type="number" value={this.props.action.hpDamage} onChange={this.onHpDamageChanged} />
             <Field label="AP消耗" type="number" value={this.props.action.spCost} onChange={this.onSpCostChanged} />
-            <Field label="属性伤害" type="number" value={this.props.action.attributeDamage} onChange={this.onAttributeDamageChanged} />
             <Field label="DP回复" type="number" value={this.props.action.dpRecovery} onChange={this.onDpRecoveryChanged} />
             <Field label="AP回复" type="number" value={this.props.action.spRecovery} onChange={this.onSpRecoveryChanged} />
             <Field label="防御值增加" type="number" value={this.props.action.defenceIncrease} onChange={this.onDefenceIncreaseChanged} />
+            <Field label="去除弱点状态" type="checkbox" value={this.props.action.weakStateRecover} onChange={this.onWeakStateRecoverChanged}/>
             <div className="field is-horizontal">
                 <div className="field-label is-normal">
                     <label className="label">属性</label>

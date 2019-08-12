@@ -5,6 +5,10 @@ interface Props{
 }
 export function Field(props: Props) {
     let {label, ...inputProps} = props;
+    let className = "input";
+    if(inputProps["type"] === "checkbox") {
+        className = "checkbox";
+    }
     return <div className="field is-horizontal">
         <div className="field-label">
             <label className="label">{label}</label>
@@ -12,7 +16,7 @@ export function Field(props: Props) {
         <div className="field-body">
             <div className="field">
                 <div className="control">
-                    <input className="input" {...inputProps}/>
+                    <input className={className} {...inputProps}/>
                 </div>
                 
             </div>

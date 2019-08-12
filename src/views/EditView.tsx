@@ -1,13 +1,14 @@
 import React from "react";
 import { SideInfoView } from "./SideInfoView";
-import { SideData, Side } from "../models/Side";
+import { SideData } from "../models/Side";
 import { ActionData } from "../models/ActionData";
 import { ActionInfoView } from "./ActionInfoView";
 import { Attribute } from "../models/Attribute";
 import { LoadView } from "./LoadView";
 import { Link } from "react-router-dom";
 
-const META_ITEM = "_saveMetaItem_V4";
+const META_ITEM = "_saveMetaItem_V5";
+//NO MIGRATE FOR V4
 const META_ITEM_V3 = "_saveMetaItem_V3";
 const META_ITEM_V2 = "_saveMetaItem_V2";
 
@@ -78,7 +79,7 @@ export class EditView extends React.Component<Props, State>{
     onAddAction() {
         this.setState((state) => {
             let arr = [...state.actions];
-            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, attributeDamage: 0, name: "", spRecovery: 0, dpRecovery: 0, defenceIncrease: 0}});
+            arr.push({id: this.maxActionId++, data: {hpDamage: 0, spCost: 0, attribute: Attribute.Earth, name: "", spRecovery: 0, dpRecovery: 0, defenceIncrease: 0, weakStateRecover: false}});
             return {actions: arr};
         })
     }

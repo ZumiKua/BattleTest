@@ -1,13 +1,13 @@
-import {Attribute} from "./Attribute"
-import { Side, HpDamageResult as SideHpDamageResult } from "./Side";
-export class Battler{
+import {Attribute, isEffective, isIneffective} from "./Attribute"
+import { Side, HpDamageResult as SideHpDamageResult, DamageMultiplierResult } from "./Side";
+export class Battler {
     maxDp: number;
     dp: number;
-    attributeResistances: {[key in Attribute]: number}
+    initialDp: number;
     side: Side;
-    private currentAttribute: {attribute: Attribute | null, point: number}
     private weakState: boolean;
-    private thisTurnDpDamaged: boolean;
+    private thisTurnDamaged: boolean;
+    attribute: Attribute;
     position: Position;
     name: string;
     id: number;
@@ -18,54 +18,55 @@ export class Battler{
         this.side = side;
         this.dp = data.dp;
         this.maxDp = data.dp;
-        this.attributeResistances = data.attributeResistances;
-        this.currentAttribute = {attribute: null, point: 0};
+        this.initialDp = data.dp;
         this.weakState = false;
-        this.thisTurnDpDamaged = false;
         this.name = data.name;
+        this.attribute = data.attribute;
+        this.thisTurnDamaged = false;
         this.id = id;
         this.defence = 0;
     }
 
-    getCurrentAttribute() : Attribute | null { 
-        return this.currentAttribute.attribute;
-    }
-
-    getAttributePoint(): number {
-        return this.currentAttribute.point;
-    }    
-
-    applyAttributeDamage(attribute: Attribute, attributeDamage: number): AttributeDamageResult{
-        let result: AttributeDamageResult = {dpDamage: 0, attributePointAttached: 0, knockedIntoWeak: false, attribute: null};
-        
-        if(this.weakState && !this.thisTurnDpDamaged && attribute === this.currentAttribute.attribute) {
-            result.dpDamage = 1;
-            this.dp -= 1;
-            this.thisTurnDpDamaged = true;
-        }
+    applyAttributeDamage(attribute: Attribute): AttributeDamageResult{
+        let result: AttributeDamageResult = {dpDamage: 0, knockedIntoWeak: false, damageMultipiler: null};
         if(this.weakState) {
-            //in weak state, attribute point won't increase anymore.
+            if(!isIneffective(attribute, this.attribute)) {
+                result.damageMultipiler = this.side.onDamageWeakState(isEffective(attribute, this.attribute));
+            }
+        }
+        if(isEffective(attribute, this.attribute)) {
+            this.dp -= 2;
+            result.dpDamage = 2;
+        }
+        else if(isIneffective(attribute, this.attribute)) {
             return result;
         }
-        result.attribute = attribute;
-        result.attributePointAttached = attributeDamage;
-        if(this.currentAttribute.attribute === attribute) {
-            this.currentAttribute.point += attributeDamage;
+        else {
+            this.dp -= 1;
+            result.dpDamage = 1;
         }
-        else{
-            this.currentAttribute.attribute = attribute;
-            this.currentAttribute.point = attributeDamage;
-        }
-        let resist = this.attributeResistances[attribute];
-        if(resist !== 0 && resist <= this.currentAttribute.point) {
+        if(this.dp <= 0) {
+            this.dp = 0;
             this.weakState = true;
-            this.currentAttribute.point = 0;
             result.knockedIntoWeak = true;
         }
         return result;
     }
 
+    applyRecoverFromWeakState(): WeakStateRecoverResult{
+        if(this.weakState) {
+            this.weakState = false;
+            this.dp = this.maxDp;
+            return true;
+        }
+        return false;
+    }
+
     applyDpRecovery(dpRecovery: number): DpRecoveryResult {
+        if(this.weakState) {
+            //we can't recover dp in weak state.
+            return 0;
+        }
         const oldDp = this.dp;
         this.dp += dpRecovery;
         if(this.dp >= this.maxDp){
@@ -74,7 +75,6 @@ export class Battler{
         if(this.dp < 0) {
             this.dp = 0;
         }
-        
         return this.dp - oldDp;
     }
 
@@ -84,13 +84,18 @@ export class Battler{
         return defenceIncrease;
     }
 
-    applyHpDamage(hpDamage: number): HpDamageResult {
+    applyHpDamage(hpDamage: number, attribute: Attribute): HpDamageResult {
+        if(isIneffective(attribute, this.attribute) && !this.weakState) {
+            hpDamage *= 0.5;
+        }
+        if(hpDamage > 0 && this.weakState) {
+            this.thisTurnDamaged = true;
+        }
         let defended;
         if(this.defence < hpDamage) {
             defended = this.defence;
             hpDamage -= this.defence;
             this.defence = 0;
-            
         }
         else{
             this.defence -= hpDamage;
@@ -98,19 +103,20 @@ export class Battler{
             hpDamage = 0;
         }
         return {...this.side.applyHpDamage(hpDamage), defended};
-        
     }
 
     onTurnStart() : void{
-        if(this.thisTurnDpDamaged) {
+        if(this.thisTurnDamaged && this.weakState) {
             this.weakState = false;
+            this.maxDp -= 1;
+            this.dp = this.maxDp;
         }
-        this.thisTurnDpDamaged = false;
+        this.thisTurnDamaged = false;
         this.defence = 0;
     }
 
     isDead() : boolean {
-        return this.dp <= 0;
+        return this.maxDp <= 0;
     }
 
     isWeakState(): boolean {
@@ -120,14 +126,13 @@ export class Battler{
 export interface AttributeDamageResult{
     knockedIntoWeak: boolean;
     dpDamage: number;
-    attribute: Attribute | null;
-    attributePointAttached: number;
+    damageMultipiler: DamageMultiplierResult | null;
 }
 export interface BattlerData{
     name: string;
     dp: number;
     id: number;
-    attributeResistances: {[key in Attribute]: number};
+    attribute: Attribute;
 }
 
 export type Position = 0|1|2|3|4|5;
@@ -145,3 +150,4 @@ export interface HpDamageResult extends SideHpDamageResult{
 
 export type DpRecoveryResult = number;
 export type DefenceIncreaseResult = number;
+export type WeakStateRecoverResult = boolean;

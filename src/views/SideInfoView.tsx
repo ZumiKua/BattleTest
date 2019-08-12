@@ -41,8 +41,7 @@ export class SideInfoView extends React.Component<Props, {}>{
 
     addBattler() {
         let battlers = [...this.props.side.battlers];
-        let res = {[Attribute.Earth]: 0, [Attribute.Electric]: 0, [Attribute.Fire]: 0, [Attribute.Water]: 0, [Attribute.Wind]: 0};
-        let b: BattlerData = {dp: 0, name: "", attributeResistances: res, id: this.maxBattlerId++};
+        let b: BattlerData = {dp: 0, name: "", id: this.maxBattlerId++, attribute: Attribute.Fire};
         battlers.push(b);
         this.props.onSideChanged({...this.props.side, battlers});
     }

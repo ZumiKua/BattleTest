@@ -3,7 +3,7 @@ import { Attribute } from "../models/Attribute";
 import React from "react";
 
 export function BattlerView(props: {battler: Battler, onClick: (battler: Battler) => void}){
-    const attribute: Attribute | null = props.battler.getCurrentAttribute();
+    const attribute: Attribute | null = props.battler.attribute;
     let attributeName : string = "无";
     if(attribute !== null){
         switch(attribute) {
@@ -27,7 +27,7 @@ export function BattlerView(props: {battler: Battler, onClick: (battler: Battler
     return <p className="battler" onClick={(e) => props.onClick(props.battler)}>
         <b>{props.battler.name}</b> &nbsp;
         <b>DP: </b> {props.battler.dp} | &nbsp;
-        <b>属性：</b>{attributeName}[{props.battler.getAttributePoint()}]
+        <b>属性：</b>{attributeName}
         <span className={props.battler.isWeakState() ? "" : "hidden"}>| 弱点</span>
         <span className={props.battler.isDead() ? "" : "hidden"}>| 死亡</span>
     </p>

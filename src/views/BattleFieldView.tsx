@@ -51,7 +51,7 @@ function BattlerBriefView(props: BriefProps){
     }
     let attrIcon = null;
     
-    const attr = props.battler.getCurrentAttribute();
+    const attr = props.battler.attribute;
     if(attr !== null) {
         attrIcon = <span className="icon"><i className={"fas " + ICON_NAME[attr]}></i></span>
     }
@@ -79,7 +79,7 @@ function BattlerDetailView(props: {battler: Battler|undefined}){
     if(props.battler === undefined) {
         return <div className="detail-view"></div>
     }
-    let attribute = props.battler.getCurrentAttribute();
+    let attribute = props.battler.attribute;
     console.log("BattlerDetailView", props.battler);
     return <div className="detail-view">
         <p>{props.battler.name}
@@ -95,7 +95,7 @@ function BattlerDetailView(props: {battler: Battler|undefined}){
         <p><b>抗:</b>{props.battler.defence}</p>
         {
             attribute === null ? null : 
-            <p><b>{ATTRIBUTE_NAME[attribute]}</b> {props.battler.getAttributePoint()}</p>
+            <p><b>{ATTRIBUTE_NAME[attribute]}</b></p>
         }
     </div>
 }
