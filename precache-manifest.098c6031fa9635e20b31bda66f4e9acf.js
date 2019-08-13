@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d18d1c63a1c81e49aab7870804d5001c",
+    "revision": "518da94a701219b3f8dbc6bc2f5386f2",
     "url": "/BattleTest/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/BattleTest/static/css/2.cd900bb3.chunk.css"
   },
   {
-    "revision": "c8fc50341f3e85a2b5a4",
+    "revision": "bbc94701ac2a83d1c950",
     "url": "/BattleTest/static/css/main.1ac65b0b.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/BattleTest/static/js/2.9f60b6d4.chunk.js"
   },
   {
-    "revision": "c8fc50341f3e85a2b5a4",
-    "url": "/BattleTest/static/js/main.2271e6b7.chunk.js"
+    "revision": "bbc94701ac2a83d1c950",
+    "url": "/BattleTest/static/js/main.d84c7d96.chunk.js"
   },
   {
     "revision": "58ce3e9da0c44de6603c",
