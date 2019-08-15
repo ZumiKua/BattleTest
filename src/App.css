@@ -147,6 +147,10 @@
   right: 0;
 }
 
+.battle-field-view td>p.battle-brief-view-dp.maxed {
+  font-weight: bold;
+}
+
 .battle-field-view td>p.battle-brief-view-icons{
   position: absolute;
   bottom: 0;
