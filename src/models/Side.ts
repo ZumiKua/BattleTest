@@ -12,7 +12,7 @@ export class Side{
     
     constructor(data: SideData) {
         //this.battlers = data.battlers.map(v => new Battler(this, v));
-        this.battlers = Object.entries(data.battlerPositions).map(([pos, id], index) => 
+        this.battlers = Object.entries(data.battlerPositions).filter(([_, id]) => id !== undefined).map(([pos, id], index) => 
             new Battler(this, data.battlers.find(b => b.id === id)!, parseInt(pos) as Position, index)
         );
         console.log(data.battlerPositions, data.battlers);

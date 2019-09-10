@@ -1,6 +1,7 @@
 import { HpDamageResult, Battler, Position, AttributeDamageResult, DpRecoveryResult, DefenceIncreaseResult, FlatPosToXY } from "./Battler";
 import { Side, SpRecoveryResult  } from "./Side";
 import { ActionData } from "./ActionData";
+import { randomBytes } from "crypto";
 
 export class Action{
     user: Battler;
@@ -52,24 +53,50 @@ export class Attack{
     user: Battler;
     target: Battler;
     action: Action;
-    hpDamageResult: HpDamageResult;
-    spRecoveryResult: SpRecoveryResult;
-    dpRecoveryResult: DpRecoveryResult;
-    defenceIncreaseResult: DefenceIncreaseResult;
-    attributeDamageResult: AttributeDamageResult;
+    hitted: boolean;
+    hpDamageResult: HpDamageResult | undefined;
+    spRecoveryResult: SpRecoveryResult | undefined;
+    dpRecoveryResult: DpRecoveryResult | undefined;
+    defenceIncreaseResult: DefenceIncreaseResult | undefined;
+    attributeDamageResult: AttributeDamageResult | undefined;
 
     constructor(user: Battler, target: Battler, action: Action){
         this.user = user;
         this.target = target;
         this.action = action;
-        let hpDamage = this.user.side.damageMultiplier * this.action.data.hpDamage;
-        this.hpDamageResult = this.target.applyHpDamage(hpDamage, this.action.data.attribute);
-        this.spRecoveryResult = this.target.side.applySpRecovery(this.action.data.spRecovery);
-        this.dpRecoveryResult = this.target.applyDpRecovery(this.action.data.dpRecovery);
-        this.defenceIncreaseResult = this.target.applyDefenceIncrease(this.action.data.defenceIncrease);
-        this.attributeDamageResult = this.target.applyAttributeDamage(this.action.data.attribute);
-        if(this.action.data.weakStateRecover) {
-            this.target.applyRecoverFromWeakState();
+        this.hitted = this.calculateHitted(user, target);
+        if(this.hitted) {
+            let hpDamage = this.user.side.damageMultiplier * this.action.data.hpDamage;
+            this.hpDamageResult = this.target.applyHpDamage(hpDamage, this.action.data.attribute);
+            this.spRecoveryResult = this.target.side.applySpRecovery(this.action.data.spRecovery);
+            this.dpRecoveryResult = this.target.applyDpRecovery(this.action.data.dpRecovery);
+            this.defenceIncreaseResult = this.target.applyDefenceIncrease(this.action.data.defenceIncrease);
+            this.attributeDamageResult = this.target.applyAttributeDamage(this.action.data.attribute);
+            if(this.action.data.weakStateRecover) {
+                this.target.applyRecoverFromWeakState();
+            }
         }
+    }
+
+    calculateHitted(user: Battler, target: Battler) : boolean{
+        const userPos = FlatPosToXY(user.position);
+        const targetPos = FlatPosToXY(target.position);
+        const row = Math.abs(userPos[0] - targetPos[0]) * 0.1;
+        let col;
+        switch(targetPos[1] + userPos[1]){
+            case 0: 
+                col = 0.2;
+                break;
+            case 1:
+                col = 0.1;
+                break;
+            case 2:
+                col = 0;
+                break;
+            default:
+                throw new Error("unknown col");
+        }
+        console.log("HitRate: ", 1 - col - row);
+        return Math.random() > col + row;
     }
 }
