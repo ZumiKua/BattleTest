@@ -146,6 +146,9 @@ export class BattleView extends React.Component<Props, State>{
             return <></>;
         }
         return <div className="container battle-view">
+            <div>
+                水>火>风>土>电>水
+            </div>
             <div className="columns">
                 <SideView isRed={true} side={this.state.sideA!} onBattlerClick={this.onBattlerSelected} onPositionChange={(p1,p2) => this.onPositionChange(p1, p2, true)}/>
                 <SideView isRed={false} side={this.state.sideB!} onBattlerClick={this.onBattlerSelected} onPositionChange={(p1,p2) => this.onPositionChange(p1, p2, false)}/>

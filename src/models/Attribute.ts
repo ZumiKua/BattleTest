@@ -14,5 +14,5 @@ export function isEffective(a: Attribute, b: Attribute) {
 }
 
 export function isIneffective(a: Attribute, b: Attribute) {
-    return !isEffective(a, b);
+    return isEffective(b, a);
 }

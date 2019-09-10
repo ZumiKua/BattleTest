@@ -56,9 +56,11 @@ function BattlerBriefView(props: BriefProps){
         attrIcon = <span className="icon"><i className={"fas " + ICON_NAME[attr]}></i></span>
     }
 
+    const dp_classname = props.battler.dp === props.battler.maxDp ? " maxed" : ""
+
     return <td onMouseEnter={() => props.enter(props.pos)} onMouseLeave={() => props.exit(props.pos)} onClick={()=>props.onClick(props.battler!)} {...dragObj}>
         <p className="battle-brief-view-name">{props.battler.name}</p>
-        <p className="battle-brief-view-dp">{props.battler.dp}</p>
+        <p className={"battle-brief-view-dp" + dp_classname}>{props.battler.dp}</p>
         <p className="battle-brief-view-icons">
             {
                 props.battler.isDead() ? <span className="icon"><i className="fas fa-skull"></i></span> : null
@@ -91,7 +93,7 @@ function BattlerDetailView(props: {battler: Battler|undefined}){
             }
         </p>
         
-        <p><b>DP:</b> {props.battler.dp}</p>
+        <p><b>DP:</b> {props.battler.dp} / {props.battler.maxDp}</p>
         <p><b>抗:</b>{props.battler.defence}</p>
         {
             attribute === null ? null : 

@@ -77,7 +77,7 @@ export class ActionInfoView extends React.Component<Props> {
             <Field label="DP回复" type="number" value={this.props.action.dpRecovery} onChange={this.onDpRecoveryChanged} />
             <Field label="AP回复" type="number" value={this.props.action.spRecovery} onChange={this.onSpRecoveryChanged} />
             <Field label="防御值增加" type="number" value={this.props.action.defenceIncrease} onChange={this.onDefenceIncreaseChanged} />
-            <Field label="去除弱点状态" type="checkbox" value={this.props.action.weakStateRecover} onChange={this.onWeakStateRecoverChanged}/>
+            <Field label="去除弱点状态" type="checkbox" value={this.props.action.weakStateRecover} checked={this.props.action.weakStateRecover} onChange={this.onWeakStateRecoverChanged}/>
             <div className="field is-horizontal">
                 <div className="field-label is-normal">
                     <label className="label">属性</label>
